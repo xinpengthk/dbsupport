@@ -100,7 +100,7 @@ cd dbsupport && python3 manage.py createsuperuser
 
 ### 系统展示截图：
 1. 工单展示页：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/allworkflow.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/allworkflow.png)
 2. 自助审核SQL：
 ![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/autoreview.png)
 3. 提交SQL工单：
