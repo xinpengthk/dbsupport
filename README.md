@@ -59,7 +59,7 @@ pymysql.install_as_MySQLdb()
 在if int(self.server_version.split('.', 1)[0]) >= 5: 这一行之前加上以下这一句并保存，记得别用tab键用4个空格缩进：
 self.server_version = '5.6.24-72.2-log'
 最后看起来像这样：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/pymysql.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/pymysql.png)
 5. 创建dbsupport本身的数据库表：
 (1)修改dbsupport/dbsupport/settings.py所有的地址信息,包括DATABASES和INCEPTION_XXX部分
 (2)通过model创建dbsupport本身的数据库表, 记得先去dbsupport数据库里CREATE DATABASE
@@ -79,10 +79,10 @@ cd dbsupport && python3 manage.py createsuperuser
     * gunicorn的安装配置示例:
         * pip3 install gunicorn
 	    * cat startup.sh
-            * ![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/startup.png)
+            * ![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/startup.png)
     * nginx配置示例：
         * cat nginx.conf
-            * ![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/nginx.png)
+            * ![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/nginx.png)
 9. 创建dbsupport系统登录用户：
 使用浏览器（推荐chrome或火狐）访问debug.sh里的地址：http://X.X.X.X:port/admin/sql/users/ ，如果未登录需要用到步骤7创建的admin系统用户来登录。
 点击右侧Add users，用户名密码自定义，至少创建一个工程师和一个审核人（步骤7创建的用户也可以登录）后续新的工程师和审核人用户请用LDAP导入sql_users表或django admin增加
@@ -102,17 +102,17 @@ cd dbsupport && python3 manage.py createsuperuser
 1. 工单展示页：
 ![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/allworkflow.png)
 2. 自助审核SQL：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/autoreview.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/autoreview.png)
 3. 提交SQL工单：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/submitsql.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/submitsql.png)
 4. SQL自动审核、人工审核、执行结果详情页：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/waitingforme.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/waitingforme.png)
 5. 用户登录页：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/login.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/login.png)
 6. 用户、集群、工单管理：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/adminsqlusers.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/adminsqlusers.png)
 7. 工单统计图表：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/charts.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/charts.png)
 8.pt-osc进度条，以及中止pt-osc进程按钮：
 ![image](https://raw.githubusercontent.com/johnliu2008/dbsupport/master/screenshots/osc_progress.png)
 
@@ -121,9 +121,9 @@ QQ群：243305010
 
 ### 部分小问题解决办法：
 1. 报错：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/bugs/bug1.png)&nbsp;
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/bugs/bug2.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/bugs/bug1.png)&nbsp;
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/bugs/bug2.png)
 原因：python3的pymysql模块会向inception发送SHOW WARNINGS语句，导致inception返回一个"Must start as begin statement"错误被dbsupport捕捉到报在日志里.
 解决：如果实在忍受不了，请修改/path/to/python3/lib/python3.4/site-packages/pymysql/cursors.py:338行，将self._show_warnings()这一句注释掉，换成pass，如下：
-![image](https://github.com/xinpengthk/dbsupport/tree/master/screenshots/bugs/bug3.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/bugs/bug3.png)
 但是此方法有副作用，会导致所有调用该pymysql模块的程序不能show warnings，因此强烈推荐使用virtualenv或venv环境！
