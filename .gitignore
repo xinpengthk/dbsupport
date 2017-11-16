@@ -1,0 +1,9 @@
+*.pyc
+*.swp
+*.lock
+*.log
+.idea/
+.DS_Store
+dbsupport/settings.py.github
+dbsupport/settings.py.dev
+workflow/migrations/
