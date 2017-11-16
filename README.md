@@ -1,5 +1,5 @@
-# archer
-基于inception的自动化SQL操作平台
+# dbsupport
+基于inception的自动化SQL操作平台，在 archer 基础上进行二次开发
 
 ### 开发语言和推荐环境：
 python：3.4<br/>
