@@ -1,6 +1,7 @@
-Django==1.8.17
+Django==1.10.8|1.8.18
 python==3.4.1
 mysql==5.6.28
 #Crypto==1.4.1
 pycrypto==2.6.1
 pymysql==0.7.9
+django-admin-bootstrapped==2.5.0

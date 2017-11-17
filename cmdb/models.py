@@ -96,6 +96,13 @@ class host(models.Model):
         help_text='请输入服务器角色!'
     )
 
+    hostDesc = models.TextField(db_column='host_dsec',
+        null=False,
+        blank=False,
+        verbose_name='服务器说明',
+        help_text='请输入服务器说明!'
+    )
+
     createdTime = models.DateTimeField(db_column='created_time', 
         blank=True,
         null=True,
@@ -113,7 +120,7 @@ class host(models.Model):
     )
 
     def __str__(self):
-        return '[%s-%s-%s]' %(self.businessName, self.hostName, self.intranetIpAddr)
+        return '【%s-%s-%s-%s-%s-%s】' %(self.serviceEnv, self.businessName, self.hostName, self.intranetIpAddr, self.hostType, self.hostRole)
 
     class Meta:
         db_table = 'cmdb_host' 
@@ -146,6 +153,13 @@ class hostUser(models.Model):
         blank=False,
         verbose_name='操作系统密码'
     )
+    
+    userDesc = models.TextField(db_column='user_dsec',
+        null=False,
+        blank=False,
+        verbose_name='服务器用户说明',
+        help_text='请输入服务器用户说明!'
+    )
 
     createdTime = models.DateTimeField(db_column='created_time', 
         blank=True,
@@ -166,20 +180,10 @@ class hostUser(models.Model):
     def __str__(self):
         return self.hostUser
 
-#     def get(self, *args, **kwargs):
-#         pc = Prpcrypt()
-#         self.hostPasswd = pc.decrypt(self.hostPasswd)
-#         super(hostUser, self).get(*args, **kwargs)
-        
-#     def save(self, *args, **kwargs):
-#         pc = Prpcrypt() #初始化
-#         self.hostPasswd = pc.encrypt(self.hostPasswd)
-#         super(hostUser, self).save(*args, **kwargs)
-
     class Meta:
         db_table = 'cmdb_host_user' 
-        verbose_name = u'机器用户密码'
-        verbose_name_plural = u'机器用户密码'
+        verbose_name = u'服务器用户密码'
+        verbose_name_plural = u'服务器用户密码'
         
 
 class dbInstance(models.Model):
@@ -224,6 +228,7 @@ class dbInstance(models.Model):
     portNum = models.IntegerField(db_column='port_num',
         null=False,
         blank=False,
+        default=3306,
         verbose_name='实例端口号',
         help_text='请输入实例端口号!',
     )
@@ -234,6 +239,13 @@ class dbInstance(models.Model):
         default='MASTER',
         verbose_name='实例角色',
         help_text='请输入实例角色!'        
+    )
+    
+    instanceDesc = models.TextField(db_column='instance_dsec',
+        null=False,
+        blank=False,
+        verbose_name='实例说明',
+        help_text='请输入实例说明!'
     )
 
     createdTime = models.DateTimeField(db_column='created_time', 
@@ -253,7 +265,7 @@ class dbInstance(models.Model):
     )
     
     def __str__(self):
-        return '[%s-%s-%s]' %(self.instanceName, self.instanceType, self.instanceRole)
+        return '【%s-%s-%s-%s】' %(self.host, self.instanceType, self.instanceName, self.instanceRole)
 
     class Meta:
         db_table = 'cmdb_db_instance' 
@@ -278,6 +290,13 @@ class dbDatabase(models.Model):
         verbose_name='数据库名',
         help_text='请输入数据库名!'
     )
+    
+    dbDesc = models.TextField(db_column='db_dsec',
+        null=False,
+        blank=False,
+        verbose_name='数据库说明',
+        help_text='请输入数据库说明（说明那些项目访问该数据库）!'
+    )
 
     createdTime = models.DateTimeField(db_column='created_time', 
         blank=True,
@@ -300,8 +319,8 @@ class dbDatabase(models.Model):
 
     class Meta:
         db_table = 'cmdb_db_database' 
-        verbose_name = u'数据库'
-        verbose_name_plural = u'数据库' 
+        verbose_name = u'数据库信息'
+        verbose_name_plural = u'数据库信息' 
 
 class dbPrivilege(models.Model):
     privName = models.CharField(db_column='priv_name',
@@ -311,6 +330,15 @@ class dbPrivilege(models.Model):
         verbose_name='权限名',
         help_text='请输入权限名!'
     )
+    
+    privDesc = models.CharField(db_column='priv_desc',
+        max_length=128,
+        null=False,
+        blank=False,
+        default='',
+        verbose_name='权限说明',
+        help_text='请输入权限说明!'
+    ) 
 
     createdTime = models.DateTimeField(db_column='created_time', 
         blank=True,
@@ -368,7 +396,7 @@ class dbUser(models.Model):
         help_text='请输入用户名!'
     )
 
-    userPasswd = models.CharField(db_column='user_passwd',
+    userPasswd = AesCharField.AesCharField(db_column='user_passwd',
         max_length=128,
         null=False,
         blank=False,
@@ -379,6 +407,7 @@ class dbUser(models.Model):
     userType = models.CharField(db_column='user_type',
         max_length=64,
         choices=USER_TYPE_CHOICE,
+        default='WEB',
         verbose_name='用户类型',
         help_text='请输入用户类型!'
     )
@@ -393,6 +422,13 @@ class dbUser(models.Model):
     
     dbRange = models.ManyToManyField(dbDatabase)
     userPriv = models.ManyToManyField(dbPrivilege)
+    
+    userDesc = models.TextField(db_column='user_dsec',
+        null=False,
+        blank=False,
+        verbose_name='数据库用户说明',
+        help_text='请输入数据库用户说明!'
+    )
 
     createdTime = models.DateTimeField(db_column='created_time', 
         blank=True,
