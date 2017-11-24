@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, render_to_response
 from django.views.decorators.csrf import csrf_exempt
 
 from utils.aesDecryptor import Prpcrypt
@@ -28,19 +28,21 @@ from workflow.sendmail import MailSender
 # from .inception import InceptionDao
 # from .models import users, master_config, workflow
 # from .sendmail import MailSender
-
 dao = Dao()
 inceptionDao = InceptionDao()
 mailSender = MailSender()
 prpCryptor = Prpcrypt()
 
 def login(request):
-    return render(request, 'login.html')
+    return render(request, 'workflow/login.html')
 
 def logout(request):
     if request.session.get('login_username', False):
         del request.session['login_username']
-    return render(request, 'login.html')
+    return render(request, 'workflow/login.html')
+
+def loginSuccessful(request):
+    return render(request, 'base/main.html')
 
 #首页，也是查看所有SQL工单页面，具备翻页功能
 def allworkflow(request):
@@ -70,7 +72,7 @@ def allworkflow(request):
                 pageNo = 0
         except ValueError as ve:
             context = {'errMsg': 'pageNo参数不是int.'}
-            return render(request, 'error.html', context)
+            return render(request, 'error/error.html', context)
 
     loginUser = request.session.get('login_username', False)
     #查询workflow model，根据pageNo和navStatus获取对应的内容
@@ -107,18 +109,21 @@ def allworkflow(request):
         listWorkflow = workflow.objects.filter(status=Const.workflowStatus['autoreviewwrong'], engineer=loginUser).order_by('-create_time')[offset:limit]
     else:
         context = {'errMsg': '传入的navStatus参数有误！'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
 
 
     context = {'currentMenu':'allworkflow', 'listWorkflow':listWorkflow, 'pageNo':pageNo, 'navStatus':navStatus, 'PAGE_LIMIT':PAGE_LIMIT, 'role':role}
-    return render(request, 'allWorkflow.html', context)
+    
+    print("###########:showallworkflow")
+    return render(request, 'workflow/allWorkflow.html', context)
 
 #提交SQL的页面
 def submitSql(request):
+    print("submitSQL start")
     masters = master_config.objects.all().order_by('cluster_name')
     if len(masters) == 0:
        context = {'errMsg': '集群数为0，可能后端数据没有配置集群'}
-       return render(request, 'error.html', context) 
+       return render(request, 'error/error.html', context) 
     
     #获取所有集群名称
     listAllClusterName = [master.cluster_name for master in masters]
@@ -129,7 +134,7 @@ def submitSql(request):
         listMasters = master_config.objects.filter(cluster_name=clusterName)
         if len(listMasters) != 1:
             context = {'errMsg': '存在两个集群名称一样的集群，请修改数据库'}
-            return render(request, 'error.html', context)
+            return render(request, 'error/error.html', context)
         #取出该集群的名称以及连接方式，为了后面连进去获取所有databases
         masterHost = listMasters[0].master_host
         masterPort = listMasters[0].master_port
@@ -145,11 +150,11 @@ def submitSql(request):
 #    listAllReviewMen = [user.display for user in reviewMen]
     if len(reviewMen) == 0:
        context = {'errMsg': '审核人为0，请配置审核人'}
-       return render(request, 'error.html', context) 
+       return render(request, 'error/error.html', context) 
     listAllReviewMen = [user.username for user in reviewMen]
   
     context = {'currentMenu':'submitsql', 'dictAllClusterDb':dictAllClusterDb, 'reviewMen':reviewMen}
-    return render(request, 'submitSql.html', context)
+    return render(request, 'workflow/submitSql.html', context)
 
 #提交SQL给inception进行解析
 def autoreview(request):
@@ -165,17 +170,17 @@ def autoreview(request):
     #服务器端参数验证
     if sqlContent is None or workflowName is None or clusterName is None or isBackup is None or reviewMan is None:
         context = {'errMsg': '页面提交参数可能为空'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
     sqlContent = sqlContent.rstrip()
     if sqlContent[-1] != ";":
         context = {'errMsg': "SQL语句结尾没有以;结尾，请后退重新修改并提交！"}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
  
     #交给inception进行自动审核
     result = inceptionDao.sqlautoReview(sqlContent, clusterName)
     if result is None or len(result) == 0:
         context = {'errMsg': 'inception返回的结果集为空！可能是SQL语句有语法错误'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
     #要把result转成JSON存进数据库里，方便SQL单子详细信息展示
     jsonResult = json.dumps(result)
 
@@ -248,14 +253,14 @@ def detail(request, workflowId):
         Content[4] = Content[4].split('\n')     # 审核/执行结果
         Content[5] = Content[5].split('\r\n')   # sql语句
     context = {'currentMenu':'allworkflow', 'workflowDetail':workflowDetail, 'listContent':listContent,'listAllReviewMen':listAllReviewMen}
-    return render(request, 'detail.html', context)
+    return render(request, 'workflow/detail.html', context)
 
 #人工审核也通过，执行SQL
 def execute(request):
     workflowId = request.POST['workflowid']
     if workflowId == '' or workflowId is None:
         context = {'errMsg': 'workflowId参数为空.'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
     
     workflowId = int(workflowId)
     workflowDetail = workflow.objects.get(id=workflowId)
@@ -269,12 +274,12 @@ def execute(request):
     loginUser = request.session.get('login_username', False)
     if loginUser is None or loginUser not in listAllReviewMen:
         context = {'errMsg': '当前登录用户不是审核人，请重新登录.'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
 
     #服务器端二次验证，当前工单状态必须为等待人工审核
     if workflowDetail.status != Const.workflowStatus['manreviewing']:
         context = {'errMsg': '当前工单状态不是等待人工审核中，请刷新当前页面！'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
 
     dictConn = getMasterConnStr(clusterName)
 
@@ -327,7 +332,7 @@ def cancel(request):
     workflowId = request.POST['workflowid']
     if workflowId == '' or workflowId is None:
         context = {'errMsg': 'workflowId参数为空.'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
 
     workflowId = int(workflowId)
     workflowDetail = workflow.objects.get(id=workflowId)
@@ -341,7 +346,7 @@ def cancel(request):
     loginUser = request.session.get('login_username', False)
     if loginUser is None or (loginUser not in listAllReviewMen and loginUser != workflowDetail.engineer):
         context = {'errMsg': '当前登录用户不是审核人也不是发起人，请重新登录.'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
 
     #服务器端二次验证，如果当前单子状态是结束状态，则不能发起终止
     if workflowDetail.status in (Const.workflowStatus['abort'], Const.workflowStatus['finish'], Const.workflowStatus['autoreviewwrong'], Const.workflowStatus['exception']):
@@ -382,7 +387,7 @@ def rollback(request):
     workflowId = request.GET['workflowid']
     if workflowId == '' or workflowId is None:
         context = {'errMsg': 'workflowId参数为空.'}
-        return render(request, 'error.html', context)
+        return render(request, 'error/error.html', context)
     workflowId = int(workflowId)
     listBackupSql = inceptionDao.getRollbackSqlList(workflowId)
     workflowDetail = workflow.objects.get(id=workflowId)
@@ -398,17 +403,18 @@ def rollback(request):
         sub_review_man = ''
 
     context = {'listBackupSql':listBackupSql, 'rollbackWorkflowName':rollbackWorkflowName, 'cluster_name':cluster_name, 'review_man':review_man, 'sub_review_man':sub_review_man}
-    return render(request, 'rollback.html', context)
+    return render(request, 'workflow/rollback.html', context)
 
 #SQL审核必读
 def dbaprinciples(request):
-    context = {'currentMenu':'dbaprinciples'}
-    return render(request, 'dbaprinciples.html', context)
+#     context = {'currentMenu':'dbaprinciples'}
+    print("start---")
+    return render(request, 'workflow/dbaprinciples.html')
 
 #图表展示
 def charts(request):
     context = {'currentMenu':'charts'}
-    return render(request, 'charts.html', context)
+    return render(request, 'workflow/charts.html', context)
 
 #根据集群名获取主库连接字符串，并封装成一个dict
 def getMasterConnStr(clusterName):

@@ -4,8 +4,10 @@ from django.conf.urls import url,include
 from workflow import views, views_ajax
 
 urlpatterns = [
-    url(r'^$', views.allworkflow, name='allworkflow'),
-    url(r'^index/$', views.allworkflow, name='allworkflow'),
+#     url(r'^$', views.allworkflow, name='allworkflow'),
+#     url(r'^index/$', views.allworkflow, name='allworkflow'),
+    url(r'^$', views.loginSuccessful, name='loginSuccessful'),
+    url(r'^index/$', views.loginSuccessful, name='loginSuccessful'),    
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^submitsql/$', views.submitSql, name='submitSql'),

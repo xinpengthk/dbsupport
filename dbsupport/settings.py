@@ -70,7 +70,7 @@ ROOT_URLCONF = 'dbsupport.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'workflow/static')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,10 +111,10 @@ USE_TZ = False
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'  # 别名
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, "static"), # 具体路径，可设置多个
-# ]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "statics"), # 具体路径，可设置多个
+]
 
 #扩展django admin里users字段用到，指定了sql/models.py里的class users
 AUTH_USER_MODEL="workflow.users"
