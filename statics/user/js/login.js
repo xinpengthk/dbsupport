@@ -17,7 +17,7 @@ function authenticateUser() {
 	var inputPassword = $('#inputPassword');
     $.ajax({
         type: "post",
-        url: "/workflow/authenticate/",
+        url: "/user/authenticate/",
         dataType: "json",
         data: {
 			username: inputUsername.val(),
@@ -27,7 +27,7 @@ function authenticateUser() {
         },
         success: function (data) {
 			if (data.status == 0) {
-				$(location).attr('href','/workflow/index/');
+				$(location).attr('href','/user/index/');
 			} else {
 				$('#wrongpwd-modal-body').html(data.msg);
 				$('#wrongpwd-modal').modal({

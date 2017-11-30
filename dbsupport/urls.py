@@ -17,7 +17,8 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('workflow.urls')),
-    url(r'^workflow/', include('workflow.urls')),
+    url(r'^', include('inception.urls')),
+    url(r'^user/', include('user.urls')),    
+    url(r'^inception/', include('inception.urls')),
     url(r'^cmdb/', include('cmdb.urls')),
 ]

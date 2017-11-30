@@ -14,9 +14,11 @@
 
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
     <link href="{% static 'hplus/css/bootstrap.min14ed.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/bootstrap-select.css' %}" rel="stylesheet">
     <link href="{% static 'hplus/css/font-awesome.min93e3.css' %}" rel="stylesheet">
     <link href="{% static 'hplus/css/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'hplus/css/style.min862f.css' %}" rel="stylesheet">
+    
 </head>
 
 <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
@@ -86,10 +88,10 @@
                     </div>
 					<ul class="nav navbar-top-links navbar-right">
 						<li class="hidden-xs">
-							<a href="/admin/password_change/" class="right-sidebar-toggle"><i class="fa fa-edit"></i>修改密码</a>
+							<a href="javascript:void(0);" class="changePasswd right-sidebar-toggle"><i class="fa fa-edit"></i>修改密码</a>
 						</li>
 						<li class="hidden-xs">
-							<a href="/workflow/logout/" class="right-sidebar-toggle" aria-expanded="false">
+							<a href="/user/logout/" class="right-sidebar-toggle" aria-expanded="false">
 								<i class="fa fa-power-off"></i> 安全退出
 							</a>
 						</li>
@@ -188,7 +190,7 @@
                 </button>
                 <nav class="page-tabs J_menuTabs">
                     <div class="page-tabs-content">
-                        <a href="javascript:;" class="active J_menuTab" data-id="/workflow/dbaprinciples/">SQL审核规范</a>
+                        <a href="javascript:;" class="active J_menuTab" data-id="/inception/dbaprinciples/">SQL审核规范</a>
                     </div>
                 </nav>
                 <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
@@ -209,7 +211,7 @@
                 </div>
             </div>
             <div class="row J_mainContent" id="content-main">
-                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="/workflow/dbaprinciples/" frameborder="0" data-id="/workflow/dbaprinciples/" seamless></iframe>
+                <iframe class="J_iframe" id="main_frame" name="iframe0" width="100%" height="100%" src="/inception/dbaprinciples/" frameborder="0" data-id="/inception/dbaprinciples/" seamless></iframe>
             </div>
             <div class="footer">
                 <div class="pull-right">&copy; 2016-2018 DYCD DB SUPPORT!</a>
@@ -533,7 +535,76 @@
 <!--             </div> -->
 <!--         </div> -->
         <!--右侧边栏结束-->
-        
+
+	<!--添加配置项弹出层 begin-->
+	<div id="change_passwd" class="row wrapper border-bottom white-bg page-heading" style="display: none">
+	    <div class="row">
+	        <div class="col-lg-12">
+	            <div class="ibox float-e-margins">                
+	                <div class="ibox-content form-horizontal">              
+	                    <div class="form-group">
+	                        <label class="col-sm-3 control-label">新密码：</label>
+	                        <div class="col-sm-7">
+	                            <input type="password" placeholder="请输入密码：" class="form-control" id="password" name="password" aria-required="true" aria-invalid="true" class="error">
+	                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入密码</span>
+	                        </div>
+	                    </div>
+	                    <div class="hr-line-dashed"></div>
+	                    <div class="form-group">
+	                        <label class="col-sm-3 control-label">重复新密码</label>
+	                        <div class="col-sm-7">
+	                            <input type="password" placeholder="请再次输入密码：" class="form-control" id="confirm_password" name="confirm_password" aria-required="true" aria-invalid="true" class="error">
+	                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请再次输入您的密码</span> 
+	                        </div>
+	                    </div>
+	                    <div class="hr-line-dashed"></div>
+	                    <div class="form-group">
+	                        <div class="col-sm-4 col-sm-offset-4">
+	                            <button class="btn btn-primary changePasswdbutton">保存内容</button>
+	                            <span class="help-block m-b-none red-bg" id="showmsg"></span>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+
+<!--     <div id="change_passwd" class="wrapper wrapper-content animated fadeInRight" style="display: none"> -->
+<!--         <div class="row"> -->
+<!--             <div class="col-sm-6"> -->
+<!--                 <div class="ibox float-e-margins"> -->
+<!--                     <div class="ibox-title"> -->
+<!--                         <h5>修改密码</h5> -->
+<!--                     </div> -->
+<!--                     <div class="ibox-content"> -->
+<!--                             <div class="form-group"> -->
+<!--                                 <label class="col-sm-3 control-label">新密码：</label> -->
+<!--                                 <div class="col-sm-8"> -->
+<!--                                     <input type="password" placeholder="请输入密码：" class="form-control error" id="password" name="password" aria-required="true" aria-invalid="true" class="error"> -->
+<!--                                     <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入密码</span> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                             <div class="form-group"> -->
+<!--                                 <label class="col-sm-3 control-label">确认密码：</label> -->
+<!--                                 <div class="col-sm-8"> -->
+<!--                                    <input type="password" placeholder="请再次输入密码：" class="form-control error" id="confirm_password" name="confirm_password" aria-required="true" aria-invalid="true" class="error"> -->
+<!--                                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请再次输入您的密码</span> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                             <div class="form-group"> -->
+<!--                                 <div class="col-sm-8 col-sm-offset-3"> -->
+<!--                                     <button class="btn btn-primary changePasswdbutton" type="submit">提交</button> -->
+<!--                                     <span class="help-block m-b-none red-bg" id="showmsg"></span> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                     </div> -->
+<!--                 </div> -->
+<!--             </div> -->
+<!--         </div> -->
+<!--     </div> -->
+ 	<!--添加配置项弹出层 end-->       
     </div>
 
 
@@ -541,17 +612,36 @@
     <script src="{% static 'hplus/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/metisMenu/jquery.metisMenu.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
-    <script src="{% static 'hplus/js/plugins/layer/layer.min.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/layer/layer.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/validate/jquery.validate.min.js' %}"></script>
     <script src="{% static 'hplus/js/hplus.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'hplus/js/contabs.min.js' %}"></script>
+    <script src="{% static 'hplus/js/contabs.min.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/pace/pace.min.js' %}"></script>
 	<script src="{% static 'hplus/js/bootstrap-select.js' %}"></script>
-	<script src="{% static 'user/js/detail.js' %}"></script>
-	<script src="{% static 'user/js/rollback.js' %}"></script>
-	<script src="{% static 'user/js/autoreview.js' %}"></script>
-	<script src="{% static 'user/js/submitsql.js' %}"></script>
-	<script src="{% static 'hplus/js/highcharts.js' %}"></script>
-	<script src="{% static 'user/js/charts.js' %}"></script>
+	<script src="{% static 'inception/js/detail.js' %}"></script>
+	<script src="{% static 'inception/js/rollback.js' %}"></script>
+	<script src="{% static 'inception/js/autoreview.js' %}"></script>
+	<script src="{% static 'inception/js/submitsql.js' %}"></script>
+	<script src="{% static 'inception/js/highcharts.js' %}"></script>
+	<script src="{% static 'inception/js/charts.js' %}"></script>
+	<script src="{% static 'user/js/changPasswd.js' %}"></script>
+	
+	<script>
+		$("body").bind("keydown",function(event){  
+			
+		     if (event.keyCode == 116) {  
+		          event.preventDefault(); //阻止默认刷新  
+// 		          $("#main_frame").attr("src",window.frames["main_frame"].src);
+// 		          alert($(".J_menuTab.active").attr("data-id")); 
+		          var dataid = $(".J_menuTab.active").attr("data-id");
+		          var iframe = $("iframe[data-id$='" + dataid + "']") ;
+// 		          alert(iframe.attr("name"));
+		          iframe.attr("src",dataid);
+// 		          alert(event.keyCode);
+		         
+		    }  
+		});
+	</script>
 </body>
 
 

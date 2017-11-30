@@ -44,7 +44,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'workflow',
+    'inception',
+    'user',
     'cmdb',
 )
 
@@ -62,7 +63,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'workflow.check_login_middleware.CheckLoginMiddleware',
+    'user.check_login_middleware.CheckLoginMiddleware',
 )
 
 ROOT_URLCONF = 'dbsupport.urls'
@@ -78,7 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'workflow.processor.global_info',
+                'user.processor.global_info',
             ],
         },
     },
@@ -117,7 +118,7 @@ STATICFILES_DIRS = [
 ]
 
 #扩展django admin里users字段用到，指定了sql/models.py里的class users
-AUTH_USER_MODEL="workflow.users"
+AUTH_USER_MODEL="user.users"
 
 ############以下部分需要用户根据自己环境自行修改###################
 

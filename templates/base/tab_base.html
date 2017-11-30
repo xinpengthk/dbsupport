@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>DYCD DB SUPPORT</title>
+	<meta charset='utf-8'>
+	{% load staticfiles %}
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'hplus/css/bootstrap.min14ed.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/bootstrap-select.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/font-awesome.min93e3.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/plugins/iCheck/custom.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/style.min862f.css' %}" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+	{% block content %}
+	{% endblock content %}
+
+    
+    <script src="{% static 'hplus/js/jquery.min.js' %}"></script>
+    <script src="{% static 'hplus/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/iCheck/icheck.min.js' %}"></script>
+    <script src="{% static 'hplus/js/content.min.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/dataTables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/dataTables/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/layer/layer.js' %}"></script>
+        
+	<script src="{% static 'inception/js/detail.js' %}"></script>
+	<script src="{% static 'inception/js/rollback.js' %}"></script>
+	<script src="{% static 'inception/js/autoreview.js' %}"></script>
+	<script src="{% static 'inception/js/submitsql.js' %}"></script>
+	<script src="{% static 'inception/js/highcharts.js' %}"></script>
+	<script src="{% static 'inception/js/charts.js' %}"></script>   
+	<script src="{% static 'inception/js/layerExt.js' %}"></script>   
+	<script type="text/javascript">
+		$("body").bind("keydown",function(event){  
+	        if (event.keyCode == 116) {  
+	                  event.preventDefault(); //阻止默认刷新  
+	                  //location.reload();  
+	                  //采用location.reload()在火狐下可能会有问题，火狐会保留上一次链接  
+	                  location=location;  
+	      }  
+	  });	
+	</script>
+</body>
+
+</html>
