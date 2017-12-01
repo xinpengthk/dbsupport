@@ -535,85 +535,19 @@
 <!--             </div> -->
 <!--         </div> -->
         <!--右侧边栏结束-->
-
-	<!--添加配置项弹出层 begin-->
-	<div id="change_passwd" class="row wrapper border-bottom white-bg page-heading" style="display: none">
-	    <div class="row">
-	        <div class="col-lg-12">
-	            <div class="ibox float-e-margins">                
-	                <div class="ibox-content form-horizontal">              
-	                    <div class="form-group">
-	                        <label class="col-sm-3 control-label">新密码：</label>
-	                        <div class="col-sm-7">
-	                            <input type="password" placeholder="请输入密码：" class="form-control" id="password" name="password" aria-required="true" aria-invalid="true" class="error">
-	                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入密码</span>
-	                        </div>
-	                    </div>
-	                    <div class="hr-line-dashed"></div>
-	                    <div class="form-group">
-	                        <label class="col-sm-3 control-label">重复新密码</label>
-	                        <div class="col-sm-7">
-	                            <input type="password" placeholder="请再次输入密码：" class="form-control" id="confirm_password" name="confirm_password" aria-required="true" aria-invalid="true" class="error">
-	                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请再次输入您的密码</span> 
-	                        </div>
-	                    </div>
-	                    <div class="hr-line-dashed"></div>
-	                    <div class="form-group">
-	                        <div class="col-sm-4 col-sm-offset-4">
-	                            <button class="btn btn-primary changePasswdbutton">保存内容</button>
-	                            <span class="help-block m-b-none red-bg" id="showmsg"></span>
-	                        </div>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-
-
-<!--     <div id="change_passwd" class="wrapper wrapper-content animated fadeInRight" style="display: none"> -->
-<!--         <div class="row"> -->
-<!--             <div class="col-sm-6"> -->
-<!--                 <div class="ibox float-e-margins"> -->
-<!--                     <div class="ibox-title"> -->
-<!--                         <h5>修改密码</h5> -->
-<!--                     </div> -->
-<!--                     <div class="ibox-content"> -->
-<!--                             <div class="form-group"> -->
-<!--                                 <label class="col-sm-3 control-label">新密码：</label> -->
-<!--                                 <div class="col-sm-8"> -->
-<!--                                     <input type="password" placeholder="请输入密码：" class="form-control error" id="password" name="password" aria-required="true" aria-invalid="true" class="error"> -->
-<!--                                     <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入密码</span> -->
-<!--                                 </div> -->
-<!--                             </div> -->
-<!--                             <div class="form-group"> -->
-<!--                                 <label class="col-sm-3 control-label">确认密码：</label> -->
-<!--                                 <div class="col-sm-8"> -->
-<!--                                    <input type="password" placeholder="请再次输入密码：" class="form-control error" id="confirm_password" name="confirm_password" aria-required="true" aria-invalid="true" class="error"> -->
-<!--                                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请再次输入您的密码</span> -->
-<!--                                 </div> -->
-<!--                             </div> -->
-<!--                             <div class="form-group"> -->
-<!--                                 <div class="col-sm-8 col-sm-offset-3"> -->
-<!--                                     <button class="btn btn-primary changePasswdbutton" type="submit">提交</button> -->
-<!--                                     <span class="help-block m-b-none red-bg" id="showmsg"></span> -->
-<!--                                 </div> -->
-<!--                             </div> -->
-<!--                     </div> -->
-<!--                 </div> -->
-<!--             </div> -->
-<!--         </div> -->
-<!--     </div> -->
- 	<!--添加配置项弹出层 end-->       
     </div>
 
 
     <script src="{% static 'hplus/js/jquery.min.js' %}"></script>
+    <script src="{% static 'hplus/js/jquerysession.js' %}"></script>
+    <script src="{% static 'hplus/js/jquery.cookie.js' %}"></script>
     <script src="{% static 'hplus/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/metisMenu/jquery.metisMenu.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/layer/layer.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/validate/jquery.validate.min.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/validate/messages_zh.min.js' %}"></script>
+    
     <script src="{% static 'hplus/js/hplus.min.js' %}"></script>
     <script src="{% static 'hplus/js/contabs.min.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/pace/pace.min.js' %}"></script>
@@ -627,18 +561,12 @@
 	<script src="{% static 'user/js/changPasswd.js' %}"></script>
 	
 	<script>
-		$("body").bind("keydown",function(event){  
-			
-		     if (event.keyCode == 116) {  
-		          event.preventDefault(); //阻止默认刷新  
-// 		          $("#main_frame").attr("src",window.frames["main_frame"].src);
-// 		          alert($(".J_menuTab.active").attr("data-id")); 
-		          var dataid = $(".J_menuTab.active").attr("data-id");
-		          var iframe = $("iframe[data-id$='" + dataid + "']") ;
-// 		          alert(iframe.attr("name"));
-		          iframe.attr("src",dataid);
-// 		          alert(event.keyCode);
-		         
+		$("body").bind("keydown",function(event){
+			 if (event.keyCode == 116) {
+				event.preventDefault(); //阻止默认刷新  
+		        var dataid = $(".J_menuTab.active").attr("data-id");
+		        var iframe = $("iframe[data-id$='" + dataid + "']") ;
+		        iframe.attr("src",dataid);
 		    }  
 		});
 	</script>

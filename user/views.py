@@ -35,3 +35,6 @@ def logout(request):
 
 def loginSuccessful(request):
     return render(request, 'base/main.html')
+
+def changePasswd(request):
+    return render(request, 'user/changePasswd.html')

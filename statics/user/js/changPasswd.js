@@ -4,11 +4,11 @@ $('.changePasswd').on('click', function () {
     $("#password").val('');
     $("#confirm_password").val('');
     open_handle = layer.open({
-        type: 1,
+        type: 2,
         title: '修改密码',
         maxmin: true,
-        area: ['400px', '400px'], //宽高
-        content: $('#change_passwd')
+        area: ['400px', '450px'], //宽高
+        content: '/user/changepasswdpost/'
     });
 });
     

@@ -91,25 +91,14 @@ WSGI_APPLICATION = 'dbsupport.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 # LANGUAGE_CODE = 'zh-cn'
-
 TIME_ZONE = 'Asia/Shanghai'
-
 USE_I18N = True
-
 USE_L10N = False
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 DATE_FORMAT = 'Y-m-d'
-
 USE_TZ = False
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
-
-# STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'  # 别名
 # STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
@@ -119,6 +108,9 @@ STATICFILES_DIRS = [
 
 #扩展django admin里users字段用到，指定了sql/models.py里的class users
 AUTH_USER_MODEL="user.users"
+
+# 设置session失效时间，60*30 为30分钟
+SESSION_COOKIE_AGE=60*30
 
 ############以下部分需要用户根据自己环境自行修改###################
 

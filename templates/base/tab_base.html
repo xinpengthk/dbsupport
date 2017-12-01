@@ -20,6 +20,8 @@
 
     
     <script src="{% static 'hplus/js/jquery.min.js' %}"></script>
+    <script src="{% static 'hplus/js/jquerysession.js' %}"></script>
+    <script src="{% static 'hplus/js/jquery.cookie.js' %}"></script>
     <script src="{% static 'hplus/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/iCheck/icheck.min.js' %}"></script>
     <script src="{% static 'hplus/js/content.min.js' %}"></script>
@@ -35,12 +37,12 @@
 	<script src="{% static 'inception/js/charts.js' %}"></script>   
 	<script src="{% static 'inception/js/layerExt.js' %}"></script>   
 	<script type="text/javascript">
-		$("body").bind("keydown",function(event){  
-	        if (event.keyCode == 116) {  
-	                  event.preventDefault(); //阻止默认刷新  
-	                  //location.reload();  
-	                  //采用location.reload()在火狐下可能会有问题，火狐会保留上一次链接  
-	                  location=location;  
+		$("body").bind("keydown",function(event){
+		    if (event.keyCode == 116) {		  
+	              event.preventDefault(); //阻止默认刷新  
+	              //location.reload();  
+	              //采用location.reload()在火狐下可能会有问题，火狐会保留上一次链接  
+	              location=location;
 	      }  
 	  });	
 	</script>

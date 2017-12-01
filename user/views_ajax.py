@@ -40,7 +40,7 @@ def loginAuthenticate(username, password):
         if len(correct_users) == 0:
             result = {'status':4, 'msg':'该用户不存在!', 'data':''}
         elif len(correct_users) == 1 and check_password(strPassword, correct_users[0].password) == True:
-            #调用了django内置函数check_password函数检测输入的密码是否与django默认的PBKDF2算法相匹配
+            #调用了django内置函数check_password函数检测输入的密码是否与django默认的算法相匹配
             if strUsername in login_failure_counter:
                 #如果登录失败计数器中存在该用户名，则清除之
                 login_failure_counter.pop(strUsername)
