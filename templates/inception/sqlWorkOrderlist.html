@@ -1,0 +1,111 @@
+{% extends "base/iframeBase.html" %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+						<h4>工单列表（共{{listSqlOrderNum}}条记录）：</h4>
+                        <div class="ibox-tools">
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+<!--                             <a type="button" id="add-work-order" href="javascript:void(0);" onclick="addWorkOrder()" class="btn btn-primary">新建工单</a> -->
+                            <div class="col-sm-3">
+                            	<form id="sqlWorkOrderSearchForm" method="get" class="form-horizontal" role="form">
+                            	{% csrf_token %}							                           
+	                                <div class="input-group">
+	                                	{% if search_keyword == '' %}
+	                                    <input type="text" placeholder="请输入关键词(工单名称或者工单内容)" class="input-sm form-control" id="search_keyword" name="search_keyword" value="">
+	                                    {% else %}
+	                                    <input type="text" placeholder="请输入关键词(工单名称或者工单内容)" class="input-sm form-control" id="search_keyword" name="search_keyword" value="{{search_keyword}}">
+	                                    {% endif %}
+	                                    <span class="input-group-btn">
+	                                    	<button type="submit" class="btn btn-sm btn-primary">搜索</button>
+	                                    </span>
+	                                </div>
+                                </form>
+                            </div>
+                        </div>
+                        <table class="table table-striped table-bordered table-hover dataTables-example" id="editable">
+                            <thead>
+                                <tr>
+                                    <th>工单ID</th>
+                                    <th>工单名称</th>
+                                    <th>发起人</th>
+                                    <th>工单状态</th>
+                                    <th>发起时间</th>
+                                    <th>目标集群</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            	{% for sqlOrder in listSqlOrder %}
+	                                <tr class="gradeX">
+	                                    <td>{{sqlOrder.id}}</td>
+	                                    <td>{{sqlOrder.workflow_name}}</td>
+	                                    <td>{{sqlOrder.engineer}}</td>
+	                                    <td class="center">{{sqlOrder.status}}</td>
+	                                    <td class="center">{{sqlOrder.create_time|date:"Y-m-d H:i:s"}}</td>
+	                                    <td>{{sqlOrder.cluster_name}}</td>
+	                                    <td>
+	                                    	<a type="button" href="javascript:void(0);" onclick="getSqlOrderDetail({{sqlOrder.id}})" class="show-sql-order-detail">查看详情</a>|
+											<a type="button" href="javascript:void(0);" onclick="delSqlOrder({{sqlOrder.id}})" class="del-sql-order">删除</a>
+										</td>
+	                                </tr>                            	
+                            	{% empty %}
+									<tr>
+										<td>暂无工单，嘿嘿嘿.</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+                            	{% endfor %}
+                            </tbody>
+                        </table>
+						<div style="text-align:center;">
+							<nav aria-label="Page navigation">
+							  <ul class="pagination">
+							    <li>
+							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'-1'}}&&search_keyword={{search_keyword}}" aria-label="Previous">
+							    	<span aria-hidden="true">&laquo;</span>
+							    	</a>
+							    </li>
+							    <li class="active">
+							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'0'}}&&search_keyword={{search_keyword}}">{{pageNo|add:"1"}}</a>
+							    </li>
+							    
+							    {% if listSqlOrderNum >= PAGE_LIMIT %}
+							    <li>
+							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'1'}}&&search_keyword={{search_keyword}}">{{pageNo|add:"2"}}</a>
+							    </li>
+							    <li>
+									<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'2'}}&&search_keyword={{search_keyword}}">{{pageNo|add:"3"}}</a>
+								</li>
+							    <li>
+							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'3'}}&&search_keyword={{search_keyword}}">{{pageNo|add:"4"}}</a>
+							    </li>
+							    <li>
+							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'4'}}&&search_keyword={{search_keyword}}">{{pageNo|add:"5"}}</a>
+							    </li>
+					    
+							    <li>
+							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'1'}}&&search_keyword={{search_keyword}}" aria-label="Next">
+							    		<span aria-hidden="true">&raquo;</span>
+							    	</a>
+							    </li>
+							    {% endif %}									   
+							  </ul>
+							</nav>						
+						</div>
+                    </div>		
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content%}

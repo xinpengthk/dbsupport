@@ -7,33 +7,51 @@
 	<meta charset='utf-8'>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{% static 'hplus/css/bootstrap.min14ed.css' %}" rel="stylesheet">
+<!--     <link href="{% static 'hplus/css/bootstrap-select.css' %}" rel="stylesheet"> -->
     <link href="{% static 'hplus/css/font-awesome.min93e3.css' %}" rel="stylesheet">
-    <link href="{% static 'hplus/css/plugins/dataTables/dataTables.bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'hplus/css/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'hplus/css/style.min862f.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/plugins/iCheck/custom.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/plugins/dataTables/dataTables.bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'hplus/css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+   
+  
 </head>
-
 <body class="gray-bg">
+
 	{% block content %}
 	{% endblock content %}
+
+	<!-- jquery -->
     <script src="{% static 'hplus/js/jquery.min.js' %}"></script>
-    <script src="{% static 'hplus/js/jquerysession.js' %}"></script>
-    <script src="{% static 'hplus/js/jquery.cookie.js' %}"></script>
-    <script src="{% static 'hplus/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'hplus/js/plugins/jeditable/jquery.jeditable.js' %}"></script>
+<!--     <script src="{% static 'hplus/js/jquerysession.js' %}"></script> -->
+<!--     <script src="{% static 'hplus/js/jquery.cookie.js' %}"></script> -->
+	<script src="{% static 'hplus/js/plugins/jeditable/jquery.jeditable.js' %}"></script>
+	<script src="{% static 'hplus/js/plugins/dataTables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/validate/jquery.validate.min.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/validate/messages_zh.min.js' %}"></script>	
+    
+	<!-- bootstrap -->
+	<script src="{% static 'hplus/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'hplus/js/plugins/dataTables/dataTables.bootstrap.js' %}"></script>
+	
+	<!-- other -->
     <script src="{% static 'hplus/js/content.min.js' %}"></script>
 	<script src="{% static 'hplus/js/plugins/layer/layer.js' %}"></script>
-    <script src="{% static 'hplus/js/plugins/validate/jquery.validate.min.js' %}"></script>
-    <script src="{% static 'hplus/js/plugins/validate/messages_zh.min.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/iCheck/icheck.min.js' %}"></script>
+    <script src="{% static 'hplus/js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+    
+	<!-- 自定义 -->
+	<script src="{% static 'base/js/formValidate.js' %}"></script>	
+	<script src="{% static 'base/js/layerExt.js' %}"></script>
 	<script src="{% static 'inception/js/detail.js' %}"></script>
 	<script src="{% static 'inception/js/rollback.js' %}"></script>
 	<script src="{% static 'inception/js/autoreview.js' %}"></script>
 	<script src="{% static 'inception/js/submitsql.js' %}"></script>
 	<script src="{% static 'inception/js/highcharts.js' %}"></script>
 	<script src="{% static 'inception/js/charts.js' %}"></script>
-	<script src="{% static 'inception/js/layerExt.js' %}"></script>
-	<script src="{% static 'base/js/formValidate.js' %}"></script>
-	<script src="{% static 'user/js/changPasswd.js' %}"></script>
+	<script src="{% static 'inception/js/inception.js' %}"></script>
+
 
 	<script type="text/javascript">
 		$("body").bind("keydown",function(event){  
@@ -44,7 +62,7 @@
 	                  location=location;  
 	      }  
 	  });
-	</script>
+	</script>  
 </body>
 
 </html>

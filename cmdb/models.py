@@ -12,7 +12,6 @@ from django.db import models
 from utils import AesCharField
 
 
-# from workflow.aes_decryptor import Prpcrypt
 # Create your models here.
 class host(models.Model):
 
@@ -184,7 +183,6 @@ class hostUser(models.Model):
         db_table = 'cmdb_host_user' 
         verbose_name = u'服务器用户密码'
         verbose_name_plural = u'服务器用户密码'
-        
 
 class dbInstance(models.Model):
     INSTANCE_ROLE_CHOICES = (

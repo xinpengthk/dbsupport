@@ -7,7 +7,7 @@ from django.conf import settings
 
 import MySQLdb
 from inception.models import master_config, sql_order
-from utils.aesDecryptor import Prpcrypt
+# from utils.aesDecryptor import Prpcrypt
 
 
 # from workflow import Prpcrypt
@@ -22,7 +22,7 @@ class InceptionDao(object):
             self.inception_remote_backup_port = int(getattr(settings, 'INCEPTION_REMOTE_BACKUP_PORT'))
             self.inception_remote_backup_user = getattr(settings, 'INCEPTION_REMOTE_BACKUP_USER')
             self.inception_remote_backup_password = getattr(settings, 'INCEPTION_REMOTE_BACKUP_PASSWORD')
-            self.prpCryptor = Prpcrypt()
+#             self.prpCryptor = Prpcrypt()
         except AttributeError as a:
             print("Error: %s" % a)
         except ValueError as v:
@@ -75,7 +75,8 @@ class InceptionDao(object):
         masterHost = listMasters[0].master_host
         masterPort = listMasters[0].master_port
         masterUser = listMasters[0].master_user
-        masterPassword = self.prpCryptor.decrypt(listMasters[0].master_password)
+#         masterPassword = self.prpCryptor.decrypt(listMasters[0].master_password)
+        masterPassword = listMasters[0].master_password
         print("master config:", masterHost, masterPort, masterUser, masterPassword)
 
         #这里无需判断字符串是否以；结尾，直接抛给inception enable check即可。

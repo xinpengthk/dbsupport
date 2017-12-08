@@ -2,7 +2,7 @@
 
 class Const(object):
     workflowStatus = {
-                        'finish': '已正常结束', 
+                        'finish': '已正常结束',
                         'abort': '人工终止流程',
                         'autoreviewing': '自动审核中',
                         'manreviewing': '等待审核人审核',

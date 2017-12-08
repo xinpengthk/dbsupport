@@ -1,0 +1,18 @@
+
+
+
+<body>
+
+<form method="post" action="#">
+<label class="col-sm-4 control-label">是否激活:</label>
+<input id="is_active" name="is_active" type="checkbox" checked="checked" class="checkbox i-checks">
+
+<button class="btn btn-primary" onclick="getE()" type='submit'>保存提交</button>
+</form>
+<script src="jquery.min.js"></script>
+<script>
+function getE(){
+	alert($('#is_active').is(':checked'))
+}
+</script>
+</body>

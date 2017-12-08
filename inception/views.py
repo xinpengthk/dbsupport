@@ -2,27 +2,23 @@
 
 from collections import OrderedDict
 import json
-import multiprocessing
 import re
 import time
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import check_password
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, render_to_response
-from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 
-from utils.aesDecryptor import Prpcrypt
 from inception.const import Const
 from inception.dao import Dao
 from inception.inception import InceptionDao
 from inception.models import sql_order, master_config
-from utils.sendmail import MailSender
 from user.models import users
+from utils.sendmail import MailSender
 
 
+# from utils.aesDecryptor import Prpcrypt
 # from .aes_decryptor import Prpcrypt
 # from .const import Const
 # from .dao import Dao
@@ -32,10 +28,11 @@ from user.models import users
 dao = Dao()
 inceptionDao = InceptionDao()
 mailSender = MailSender()
-prpCryptor = Prpcrypt()
+# prpCryptor = Prpcrypt()
 
 #首页，也是查看所有SQL工单页面，具备翻页功能
 def allworkflow(request):
+
     #一个页面展示
     PAGE_LIMIT = 15
 
@@ -60,6 +57,7 @@ def allworkflow(request):
             if pageNo < 0:
                 pageNo = 0
         except ValueError as ve:
+            print(ve)
             context = {'errMsg': 'pageNo参数不是int.'}
             return render(request, 'error/error.html', context)
 
@@ -115,16 +113,14 @@ def allworkflow(request):
 
     context = {'currentMenu':'allworkflow', 'listWorkflow':listWorkflow, 'listWorkflowNum':listWorkflowNum, 'pageNo':pageNo, 'navStatus':navStatus, 'PAGE_LIMIT':PAGE_LIMIT, 'role':role}
     
-    print("###########:showallworkflow")
     return render(request, 'inception/allWorkflow.html', context)
 
 #提交SQL的页面
 def submitSql(request):
-    print("submitSQL start")
     masters = master_config.objects.all().order_by('cluster_name')
     if len(masters) == 0:
-       context = {'errMsg': '集群数为0，可能后端数据没有配置集群'}
-       return render(request, 'error/error.html', context) 
+        context = {'errMsg': '集群数为0，可能后端数据没有配置集群'}
+        return render(request, 'error/error.html', context) 
     
     #获取所有集群名称
     listAllClusterName = [master.cluster_name for master in masters]
@@ -140,7 +136,8 @@ def submitSql(request):
         masterHost = listMasters[0].master_host
         masterPort = listMasters[0].master_port
         masterUser = listMasters[0].master_user
-        masterPassword = prpCryptor.decrypt(listMasters[0].master_password)
+#         masterPassword = prpCryptor.decrypt(listMasters[0].master_password)
+        masterPassword = listMasters[0].master_password
 
         listDb = dao.getAlldbByCluster(masterHost, masterPort, masterUser, masterPassword)
         dictAllClusterDb[clusterName] = listDb
@@ -150,8 +147,8 @@ def submitSql(request):
     reviewMen = users.objects.filter(role='审核人').exclude(username=loginUser)
 #    listAllReviewMen = [user.display for user in reviewMen]
     if len(reviewMen) == 0:
-       context = {'errMsg': '审核人为0，请配置审核人'}
-       return render(request, 'error/error.html', context) 
+        context = {'errMsg': '审核人为0，请配置审核人'}
+        return render(request, 'error/error.html', context) 
     listAllReviewMen = [user.username for user in reviewMen]
   
     context = {'currentMenu':'submitsql', 'dictAllClusterDb':dictAllClusterDb, 'reviewMen':reviewMen}
@@ -356,7 +353,7 @@ def cancel(request):
 
     workflowDetail.status = Const.workflowStatus['abort']
     workflowDetail.save()
-	
+    
     #如果人工终止了，则根据settings.py里的配置决定是否给提交者和审核人发邮件提醒。如果是发起人终止流程，则给主、副审核人各发一封；如果是审核人终止流程，则给发起人发一封邮件，并附带说明此单子被拒绝掉了，需要重新修改.
     if hasattr(settings, 'MAIL_ON_OFF') == True:
         if getattr(settings, 'MAIL_ON_OFF') == "on":
@@ -384,8 +381,6 @@ def cancel(request):
 
     return HttpResponseRedirect('/inception/detail/' + str(workflowId) + '/')
 #     return HttpResponseRedirect('/workflow/submitsql/')
-
-
 
 #展示回滚的SQL
 def rollback(request):
@@ -420,6 +415,191 @@ def charts(request):
     context = {'currentMenu':'charts'}
     return render(request, 'inception/charts.html', context)
 
+#数据库集群展示
+def masterConfigList(request):
+    PAGE_LIMIT = 15
+
+    #参数检查
+    if 'pageNo' in request.GET:
+        pageNo = request.GET['pageNo']
+    else:
+        pageNo = '0'
+
+    if not isinstance(pageNo, str):
+        raise TypeError('pageNo页面传入参数不对')
+    else:
+        try:
+            pageNo = int(pageNo)
+            if pageNo < 0:
+                pageNo = 0
+        except ValueError as ve:
+            print(ve)
+            context = {'errMsg': 'pageNo参数不是int.'}
+            return render(request, 'error/error.html', context)
+
+    offset = pageNo * PAGE_LIMIT
+    limit = offset + PAGE_LIMIT
+   
+    # 查询
+    listMasterConfig = []
+    listMasterConfigNum = 0
+
+    try:
+        listMasterConfig = master_config.objects.all().order_by('-create_time')[offset:limit]
+        listMasterConfigNum = master_config.objects.count()        
+    except Exception as e:
+        print(e)
+        context = {'errMsg': '内部错误！'}
+        return render(request, 'error/error.html', context)
+
+    
+    context = {'listMasterConfig':listMasterConfig, 'listMasterConfigNum':listMasterConfigNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT}
+    
+    return render(request, 'inception/masterConfigList.html', context)
+
+# 新增数据库集群配置
+def addMasterConfigForm(request):
+    return render(request, 'inception/addMasterConfig.html')
+
+# 查询工单（admin用户）（搜索问题）
+def getSqlWorkOrderList(request):
+
+    search_keyword = request.GET.get('search_keyword')
+
+    if search_keyword is None:
+        search_keyword = ''
+    
+    search_keyword = search_keyword.strip()
+
+    print("search_keyword:",search_keyword)
+
+    PAGE_LIMIT = 15
+
+    #参数检查
+    if 'pageNo' in request.GET:
+        pageNo = request.GET['pageNo']
+    else:
+        pageNo = '0'
+        
+    if not isinstance(pageNo, str):
+        raise TypeError('pageNo页面传入参数不对')
+    else:
+        try:
+            pageNo = int(pageNo)
+            if pageNo < 0:
+                pageNo = 0
+        except ValueError as ve:
+            print(ve)
+            context = {'errMsg': 'pageNo参数不是int.'}
+            return render(request, 'error/error.html', context)
+
+    offset = pageNo * PAGE_LIMIT
+    limit = offset + PAGE_LIMIT
+   
+    # 查询
+    listSqlOrder = []
+    listSqlOrderNum = 0
+
+    #服务器端参数验证
+    if search_keyword == "":
+        try:
+            print("search_keyword is None:")
+            listSqlOrder = sql_order.objects.all().order_by('-create_time')[offset:limit]
+            listSqlOrderNum = sql_order.objects.count()        
+        except Exception as e:
+            print(e)
+            context = {'errMsg': '内部错误！'}
+            return render(request, 'error/error.html', context)
+    else:
+        try:
+            print("search_keyword is Not None:")
+            listSqlOrder = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).order_by('-create_time')[offset:limit]
+            listSqlOrderNum = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).count()       
+        except Exception as e:
+            print(e)
+            context = {'errMsg': '内部错误！'}
+            return render(request, 'error/error.html', context)
+
+    
+    context = {'listSqlOrder':listSqlOrder, 'listSqlOrderNum':listSqlOrderNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT, "search_keyword":search_keyword}
+    
+    return render(request, 'inception/sqlWorkOrderlist.html', context)
+    
+def getSqlWorkOrderDetail(request, sqlOrderId):
+    print("begin: 1111")
+    sqlOrderDetail = get_object_or_404(sql_order, pk=sqlOrderId)
+    if sqlOrderDetail.status in (Const.workflowStatus['finish'], Const.workflowStatus['exception']):
+        listContent = json.loads(sqlOrderDetail.execute_result)
+    else:
+        listContent = json.loads(sqlOrderDetail.review_content)
+        
+    try:
+        listAllReviewMen = json.loads(sqlOrderDetail.review_man)
+    except ValueError:
+        listAllReviewMen = (sqlOrderDetail.review_man, )
+
+    # 格式化detail界面sql语句和审核/执行结果 by 搬砖工
+    for Content in listContent:
+        Content[4] = Content[4].split('\n')     # 审核/执行结果
+        Content[5] = Content[5].split('\r\n')   # sql语句
+
+    context = {'sqlOrderDetail':sqlOrderDetail, 'listContent':listContent,'listAllReviewMen':listAllReviewMen}
+    return render(request, 'inception/sqlWorkOrderDetail.html', context) 
+# 
+# #查询工单
+# def sqlWorkOrderSearch(request):
+#     PAGE_LIMIT = 15
+#     search_keyword = request.POST.get('search_keyword')
+#     print("查询关键字", search_keyword)
+#     
+#     #参数检查
+#     if 'pageNo' in request.GET:
+#         pageNo = request.GET['pageNo']
+#     else:
+#         pageNo = '0'
+# 
+#     if not isinstance(pageNo, str):
+#         raise TypeError('pageNo页面传入参数不对')
+#     else:
+#         try:
+#             pageNo = int(pageNo)
+#             if pageNo < 0:
+#                 pageNo = 0
+#         except ValueError as ve:
+#             print(ve)
+#             context = {'errMsg': 'pageNo参数不是int.'}
+#             return render(request, 'error/error.html', context)
+# 
+#     offset = pageNo * PAGE_LIMIT
+#     limit = offset + PAGE_LIMIT
+#    
+#     # 查询
+#     listSqlOrder = []
+#     listSqlOrderNum = 0
+# 
+#     #服务器端参数验证
+#     if search_keyword is None or search_keyword == "":
+#         try:
+#             listSqlOrder = sql_order.objects.all().order_by('-create_time')[offset:limit]
+#             listSqlOrderNum = sql_order.objects.count()        
+#         except Exception as e:
+#             print(e)
+#             context = {'errMsg': '内部错误！'}
+#             return render(request, 'error/error.html', context)
+#     else:
+#         try:
+#             listSqlOrder = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).order_by('-create_time')[offset:limit]
+#             listSqlOrderNum = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).count()       
+#         except Exception as e:
+#             print(e)
+#             context = {'errMsg': '内部错误！'}
+#             return render(request, 'error/error.html', context)
+# 
+#     
+#     context = {'listSqlOrder':listSqlOrder, 'listSqlOrderNum':listSqlOrderNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT}
+#     
+#     return render(request, 'inception/sqlWorkOrderlist.html', context)
+
 #根据集群名获取主库连接字符串，并封装成一个dict
 def getMasterConnStr(clusterName):
     listMasters = master_config.objects.filter(cluster_name=clusterName)
@@ -427,7 +607,8 @@ def getMasterConnStr(clusterName):
     masterHost = listMasters[0].master_host
     masterPort = listMasters[0].master_port
     masterUser = listMasters[0].master_user
-    masterPassword = prpCryptor.decrypt(listMasters[0].master_password)
+#     masterPassword = prpCryptor.decrypt(listMasters[0].master_password)
+    masterPassword = listMasters[0].master_password
     dictConn = {'masterHost':masterHost, 'masterPort':masterPort, 'masterUser':masterUser, 'masterPassword':masterPassword}
     return dictConn
 
@@ -440,3 +621,4 @@ def _getDetailUrl(request):
     scheme = request.scheme
     host = request.META['HTTP_HOST']
     return "%s://%s/detail/" % (scheme, host)
+

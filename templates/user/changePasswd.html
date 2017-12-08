@@ -1,42 +1,40 @@
-{% extends "base/tab_base.html" %}
+{% extends "base/iframeBase.html" %}
 
 {% block content %}
- 
 		<!--添加配置项弹出层 begin-->
 		<div id="change_passwd" class="row wrapper border-bottom white-bg page-heading">
 <!-- 		<div id="change_passwd" class="row wrapper border-bottom white-bg page-heading" style="display: none"> -->
 		    <div class="row">
 		        <div class="col-lg-12">
-		            <div class="ibox float-e-margins">                
-		                <div class="ibox-content form-horizontal">              
-		                    <div class="form-group">
-		                        <label class="col-sm-3 control-label">新密码：</label>
-		                        <div class="col-sm-7">
-		                            <input type="password" placeholder="请输入密码：" class="form-control" id="password" name="password" aria-required="true" aria-invalid="true" class="error">
-		                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入密码</span>
-		                        </div>
-		                    </div>
-		                    <div class="hr-line-dashed"></div>
-		                    <div class="form-group">
-		                        <label class="col-sm-3 control-label">重复新密码</label>
-		                        <div class="col-sm-7">
-		                            <input type="password" placeholder="请再次输入密码：" class="form-control" id="confirm_password" name="confirm_password" aria-required="true" aria-invalid="true" class="error">
-		                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请再次输入您的密码</span> 
-		                        </div>
-		                    </div>
-		                    <div class="hr-line-dashed"></div>
-		                    <div class="form-group">
-		                        <div class="col-sm-4 col-sm-offset-4">
-		                            <button class="btn btn-primary changePasswdbutton">保存内容</button>
-		                            <span class="help-block m-b-none red-bg" id="showmsg"></span>
-		                        </div>
-		                    </div>
+		            <div class="ibox float-e-margins">          
+		                <div class="ibox-content">    
+		                	<form class="form-horizontal m-t" id="changePasswdForm">          
+			                    <div class="form-group">
+			                        <label class="col-sm-3 control-label">新密码：</label>
+			                        <div class="col-sm-7">
+			                            <input type="password" placeholder="请输入密码：" class="form-control" id="password" name="password">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入密码</span>
+			                        </div>
+			                    </div>
+			                    <div class="hr-line-dashed"></div>
+			                    <div class="form-group">
+			                        <label class="col-sm-3 control-label">重复新密码</label>
+			                        <div class="col-sm-7">
+			                            <input type="password" placeholder="请再次输入密码：" class="form-control" id="confirm_password" name="confirm_password">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请再次输入您的密码</span> 
+			                        </div>
+			                    </div>
+			                    <div class="hr-line-dashed"></div>
+			                    <div class="form-group">
+			                        <div class="col-sm-4 col-sm-offset-4">
+			                            <button class="btn btn-primary changePasswdbutton" type='submit'>提交</button>
+			                            <span class="help-block m-b-none red-bg" id="showmsg"></span>
+			                        </div>
+			                    </div>
+			            	</form>
 		                </div>
 		            </div>
 		        </div>
 		    </div>
 		</div>
-
-
-
 {% endblock content%}

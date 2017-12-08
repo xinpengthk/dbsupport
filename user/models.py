@@ -2,10 +2,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from utils.aesDecryptor import Prpcrypt
 
-
-# from .aes_decryptor import Prpcrypt
 # Create your models here.
 #角色分两种：
 #1.工程师：可以提交SQL上线单的工程师们，username字段为登录用户名，display字段为展示的中文名。

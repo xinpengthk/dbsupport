@@ -2,22 +2,15 @@
 
 import datetime
 import json
-import multiprocessing
-import re
 
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password, make_password
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from utils.aesDecryptor import Prpcrypt
+
 from .models import users
-from django.core.cache import cache
 
 
-prpCryptor = Prpcrypt()
 login_failure_counter = {} #登录失败锁定计数器，给loginAuthenticate用的
 sqlSHA1_cache = {} #存储SQL文本与SHA1值的对应关系，尽量减少与数据库的交互次数,提高效率。格式: {工单ID1:{SQL内容1:sqlSHA1值1, SQL内容2:sqlSHA1值2},}
 
@@ -115,4 +108,94 @@ def changePasswd(request):
     except Exception as e:
         print(e)
         return render(request, 'error/error.html')
+
+@csrf_exempt    
+def addChangeUserInfo(request):
+    '''
+    新增用户
+    修改用户
+    '''
+    v_userId = request.POST.get('user_id')
+    v_userName = request.POST.get('user_name').strip()
+    v_display = request.POST.get('display').strip()
+    v_role = request.POST.get('role').strip()
+    v_email = request.POST.get('email').strip()
+    v_password = request.POST.get('password').strip()
+    v_is_active = request.POST.get('is_active')
+    v_is_staff = request.POST.get('is_staff')
     
+    print(request.POST.get('is_active'))
+    print(request.POST.get('is_staff'))
+    
+    
+    if v_is_active == 'true':
+        v_is_active = 1
+    else:
+        v_is_active = 0
+        
+    if v_is_staff == 'true':
+        v_is_staff = 1
+    else:
+        v_is_staff = 0
+    
+    v_password = make_password(v_password)
+        
+    print(v_userId, v_userName, v_display, v_role, v_email, v_password, v_is_active, v_is_staff)
+        
+    if v_userId == '' or v_userId is None:
+        # 新增
+        try:   
+            userObj = users(username=v_userName, display=v_display, role=v_role, email=v_email, password=v_password, is_active=v_is_active, is_staff=v_is_staff, is_superuser=0, first_name='', last_name='', date_joined= datetime.datetime.now())
+            userObj.save()
+            result = {'status':1, 'msg':'保存成功!', 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')
+        except Exception as e:
+            result = {'status':2, 'msg':'保存失败!'+str(e), 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')        
+    else:
+        # 修改
+        try:
+            userObj = users.objects.filter(id=v_userId)
+            userObj.update(username=v_userName, display=v_display, role=v_role, email=v_email, is_active=v_is_active, is_staff=v_is_staff)
+#             masterConfigObj.save()
+            result = {'status':1, 'msg':'修改成功!', 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')
+        except Exception as e:
+            result = {'status':2, 'msg':'修改失败!'+str(e), 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')      
+
+@csrf_exempt    
+def delUser(request):
+    v_userId = request.POST['userId']
+
+    if v_userId == "" or v_userId is None:
+        result = {'status':3, 'msg':'未选中任何记录!', 'data':''}
+        return HttpResponse(json.dumps(result), content_type='application/json')
+    else:    
+        try:
+            delResult = users.objects.filter(id=v_userId).delete()
+            print(delResult)
+            result = {'status':1, 'msg':'删除成功!', 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')            
+        except Exception as e:
+            print(e)
+            result = {'status':2, 'msg':'删除失败!'+str(e), 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')
+        
+@csrf_exempt    
+def resetUserPasswd(request):
+    v_userId = request.POST['userId']
+
+    if v_userId == "" or v_userId is None:
+        result = {'status':3, 'msg':'未选中任何记录!', 'data':''}
+        return HttpResponse(json.dumps(result), content_type='application/json')
+    else:    
+        try:
+            userObj = users.objects.filter(id=v_userId)
+            userObj.update(password=make_password('111111'))
+            result = {'status':1, 'msg':'重置密码成功!', 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')            
+        except Exception as e:
+            print(e)
+            result = {'status':2, 'msg':'重置密码失败!'+str(e), 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')

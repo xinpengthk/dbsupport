@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*- 
 from django.db import models
 
-from utils.aesDecryptor import Prpcrypt
+from utils import AesCharField
+
 
 #各个线上主库地址。
 class master_config(models.Model):
@@ -9,7 +10,7 @@ class master_config(models.Model):
     master_host = models.CharField('主库地址', max_length=200)
     master_port = models.IntegerField('主库端口', default=3306)
     master_user = models.CharField('登录主库的用户名', max_length=100)
-    master_password = models.CharField('登录主库的密码', max_length=300)
+    master_password = AesCharField.AesCharField('登录主库的密码', max_length=300)
     create_time = models.DateTimeField('创建时间', auto_now_add=True)
     update_time = models.DateTimeField('更新时间', auto_now=True)
 
@@ -19,10 +20,10 @@ class master_config(models.Model):
         verbose_name = u'主库地址'
         verbose_name_plural = u'主库地址'
 
-    def save(self, *args, **kwargs):
-        pc = Prpcrypt() #初始化
-        self.master_password = pc.encrypt(self.master_password)
-        super(master_config, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         pc = Prpcrypt() #初始化
+#         self.master_password = pc.encrypt(self.master_password)
+#         super(master_config, self).save(*args, **kwargs)
 
 
 #存放各个SQL上线工单的详细内容，可定期归档或清理历史数据，也可通过alter table workflow row_format=compressed; 来进行压缩

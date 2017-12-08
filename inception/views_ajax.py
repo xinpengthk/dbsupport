@@ -1,19 +1,11 @@
 # -*- coding: UTF-8 -*- 
 
-import datetime
 import json
-import multiprocessing
-import re
 
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import check_password
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.db.models.query_utils import Q
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-
-from utils.aesDecryptor import Prpcrypt
 
 from .const import Const
 from .dao import Dao
@@ -23,7 +15,6 @@ from .models import master_config, sql_order
 
 dao = Dao()
 inceptionDao = InceptionDao()
-prpCryptor = Prpcrypt()
 login_failure_counter = {} #登录失败锁定计数器，给loginAuthenticate用的
 sqlSHA1_cache = {} #存储SQL文本与SHA1值的对应关系，尽量减少与数据库的交互次数,提高效率。格式: {工单ID1:{SQL内容1:sqlSHA1值1, SQL内容2:sqlSHA1值2},}
 
@@ -183,3 +174,74 @@ def stopOscProgress(request):
     else:
         optResult = {"status":4, "msg":"不是由pt-OSC执行的", "data":""}
     return HttpResponse(json.dumps(optResult), content_type='application/json')
+
+@csrf_exempt
+def addMasterConfig(request):
+    clusterId = request.POST['cluster_id']
+    clusterName = request.POST['cluster_name']
+    masterHost = request.POST['master_host']
+    masterPort = request.POST['master_port']
+    masterUser = request.POST['master_user']
+    masterPassword = request.POST['master_password']
+    
+    if clusterId == "" or clusterId is None:
+        # 新增
+        try:        
+            masterConfigObj = master_config(cluster_name=clusterName, master_host=masterHost, master_port=masterPort, master_user=masterUser, master_password=masterPassword)
+            masterConfigObj.save()
+            result = {'status':1, 'msg':'保存成功!', 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')
+        except Exception as e:
+            print(e)
+            result = {'status':2, 'msg':'保存失败!'+str(e), 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')
+    else:
+        # 修改
+        try:        
+            masterConfigObj = master_config.objects.filter(id=clusterId)
+            masterConfigObj.update(cluster_name=clusterName, master_host=masterHost, master_port=masterPort, master_user=masterUser, master_password=masterPassword)
+#             masterConfigObj.save()
+            result = {'status':1, 'msg':'修改成功!', 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')
+        except Exception as e:
+            print(e)
+            result = {'status':2, 'msg':'修改失败!'+str(e), 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')        
+
+
+def delMasterConfig(request):
+    clusterId = request.POST['masterConfigId']
+    
+    if clusterId == "" or clusterId is None:
+        result = {'status':3, 'msg':'未选中任何记录!', 'data':''}
+        return HttpResponse(json.dumps(result), content_type='application/json')
+    else:
+        try:
+            delResult = master_config.objects.filter(id=clusterId).delete()
+            print(delResult)
+            result = {'status':1, 'msg':'删除成功!', 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')            
+        except Exception as e:
+            print(e)
+            result = {'status':2, 'msg':'删除失败!'+str(e), 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')                
+
+@csrf_exempt    
+def delsqlOrder(request):
+    sqlOrderId = request.POST['sqlOrderId']
+
+    if sqlOrderId == "" or sqlOrderId is None:
+        result = {'status':3, 'msg':'未选中任何记录!', 'data':''}
+        return HttpResponse(json.dumps(result), content_type='application/json')
+    else:    
+        try:
+            delResult = sql_order.objects.filter(id=sqlOrderId).delete()
+            print(delResult)
+            result = {'status':1, 'msg':'删除成功!', 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')            
+        except Exception as e:
+            print(e)
+            result = {'status':2, 'msg':'删除失败!'+str(e), 'data':''}
+            return HttpResponse(json.dumps(result), content_type='application/json')
+
+

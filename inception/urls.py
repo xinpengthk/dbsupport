@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*- 
 
-from django.conf.urls import url, include
+from django.conf.urls import url
 
 from inception import views, views_ajax
 
@@ -25,4 +25,13 @@ urlpatterns = [
     url(r'^getOscPercent/$', views_ajax.getOscPercent, name='getOscPercent'),
     url(r'^getWorkflowStatus/$', views_ajax.getWorkflowStatus, name='getWorkflowStatus'),
     url(r'^stopOscProgress/$', views_ajax.stopOscProgress, name='stopOscProgress'),
+    url(r'^masterConfigList/$', views.masterConfigList, name='masterConfigList'),
+    url(r'^addMasterConfigForm/$', views.addMasterConfigForm, name='addMasterConfigForm'),
+    url(r'^addMasterConfig/$', views_ajax.addMasterConfig, name='addMasterConfig'),
+    url(r'^delMasterConfig/$', views_ajax.delMasterConfig, name='delMasterConfig'),
+    url(r'^getSqlWorkOrderList/$', views.getSqlWorkOrderList, name='getSqlWorkOrderList'),
+    url(r'^delsqlOrder/$', views_ajax.delsqlOrder, name='delsqlOrder'),
+    url(r'^getSqlWorkOrderDetail/(?P<sqlOrderId>[0-9]+)/$', views.getSqlWorkOrderDetail, name='getSqlWorkOrderDetail'),
+#     url(r'^sqlWorkOrderSearch/$', views.sqlWorkOrderSearch, name='sqlWorkOrderSearch'),
+    
 ]
