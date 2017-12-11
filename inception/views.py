@@ -181,9 +181,7 @@ def getWorkOrderList(request):
       
             print('listWorkflow:', listWorkflow)
             print("listWorkflowNum:", listWorkflowNum)
-#             listWorkflow = sql_order.objects.filter(engineer=loginUser, Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)|Q(status__contains=search_keyword)).order_by('-create_time')[offset:limit]
-#             listWorkflowNum = sql_order.objects.filter(engineer=loginUser, Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)|Q(status__contains=search_keyword)).count()
-
+            
     context = {'currentMenu':'allworkflow', 'listWorkflow':listWorkflow, 'listWorkflowNum':listWorkflowNum, 'pageNo':pageNo, 'search_keyword':search_keyword, 'PAGE_LIMIT':PAGE_LIMIT, 'role':role}
     
     return render(request, 'inception/allWorkflow.html', context)
