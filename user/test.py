@@ -58,8 +58,8 @@ leftMenusSuper = {
 
 if __name__ == '__main__':
    
-#     print(dict(leftMenusSuper, **leftMenusGeneral))
-#      for menuLevel1,menuLevel2List in leftMenus.items():
+    print(dict(leftMenusSuper, **leftMenusGeneral))
+#     for menuLevel1,menuLevel2List in leftMenus.items():
 #          print('##:%s', menuLevel1)
 #          for menuLevel2 in menuLevel2List:
 #              print('####:%s', menuLevel2.get('name'))

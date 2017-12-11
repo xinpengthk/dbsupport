@@ -115,6 +115,79 @@ def allworkflow(request):
     
     return render(request, 'inception/allWorkflow.html', context)
 
+def getWorkOrderList(request):  
+    # 为前端用户提供
+    
+    search_keyword = request.GET.get('search_keyword')
+
+    if search_keyword is None:
+        search_keyword = ''
+    
+    search_keyword = search_keyword.strip()
+
+    print("search_keyword:",search_keyword)
+        
+    #一个页面展示
+    PAGE_LIMIT = 15
+
+    pageNo = 0
+
+    #参数检查
+    if 'pageNo' in request.GET:
+        pageNo = request.GET['pageNo']
+    else:
+        pageNo = '0'
+    
+    if not isinstance(pageNo, str):
+        raise TypeError('pageNo或navStatus页面传入参数不对')
+    else:
+        try:
+            pageNo = int(pageNo)
+            if pageNo < 0:
+                pageNo = 0
+        except ValueError as ve:
+            print(ve)
+            context = {'errMsg': 'pageNo参数不是int.'+str(ve)}
+            return render(request, 'error/error.html', context)
+
+    loginUser = request.session.get('login_username', False)
+    #查询workflow model，根据pageNo和navStatus获取对应的内容
+    offset = pageNo * PAGE_LIMIT
+    limit = offset + PAGE_LIMIT
+
+    #修改全部工单、审核不通过、已执行完毕界面工程师只能看到自己发起的工单，审核人可以看到全部
+    listWorkflow = []
+    listWorkflowNum = 0
+    #查询全部流程
+    loginUserOb = users.objects.get(username=loginUser)
+    role = loginUserOb.role
+    
+
+    if search_keyword == "":
+        if role == '审核人':
+            listWorkflow = sql_order.objects.all().order_by('-create_time')[offset:limit]
+            listWorkflowNum = sql_order.objects.all().count()
+        elif role == '工程师':
+            listWorkflow = sql_order.objects.filter(engineer=loginUser).order_by('-create_time')[offset:limit]
+            listWorkflowNum = sql_order.objects.filter(engineer=loginUser).count() 
+            print("listWorkflow Type:", type(listWorkflow))     
+    else:
+        if role == '审核人':
+            listWorkflow = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)|Q(status__contains=search_keyword)).order_by('-create_time')[offset:limit]
+            listWorkflowNum = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)|Q(status__contains=search_keyword)).count()
+        elif role == '工程师':
+            listWorkflow = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)|Q(status__contains=search_keyword), engineer=loginUser).order_by('-create_time')[offset:limit]
+            listWorkflowNum = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)|Q(status__contains=search_keyword), engineer=loginUser).count()
+      
+            print('listWorkflow:', listWorkflow)
+            print("listWorkflowNum:", listWorkflowNum)
+#             listWorkflow = sql_order.objects.filter(engineer=loginUser, Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)|Q(status__contains=search_keyword)).order_by('-create_time')[offset:limit]
+#             listWorkflowNum = sql_order.objects.filter(engineer=loginUser, Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)|Q(status__contains=search_keyword)).count()
+
+    context = {'currentMenu':'allworkflow', 'listWorkflow':listWorkflow, 'listWorkflowNum':listWorkflowNum, 'pageNo':pageNo, 'search_keyword':search_keyword, 'PAGE_LIMIT':PAGE_LIMIT, 'role':role}
+    
+    return render(request, 'inception/allWorkflow.html', context)
+
 #提交SQL的页面
 def submitSql(request):
     masters = master_config.objects.all().order_by('cluster_name')
@@ -417,6 +490,16 @@ def charts(request):
 
 #数据库集群展示
 def masterConfigList(request):
+
+    search_keyword = request.GET.get('search_keyword')
+
+    if search_keyword is None:
+        search_keyword = ''
+    
+    search_keyword = search_keyword.strip()
+
+    print("search_keyword:",search_keyword)
+
     PAGE_LIMIT = 15
 
     #参数检查
@@ -444,17 +527,26 @@ def masterConfigList(request):
     listMasterConfig = []
     listMasterConfigNum = 0
 
-    try:
-        listMasterConfig = master_config.objects.all().order_by('-create_time')[offset:limit]
-        listMasterConfigNum = master_config.objects.count()        
-    except Exception as e:
-        print(e)
-        context = {'errMsg': '内部错误！'}
-        return render(request, 'error/error.html', context)
-
-    
-    context = {'listMasterConfig':listMasterConfig, 'listMasterConfigNum':listMasterConfigNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT}
-    
+    #服务器端参数验证
+    if search_keyword == "":
+        try:
+            listMasterConfig = master_config.objects.all().order_by('-create_time')[offset:limit]
+            listMasterConfigNum = master_config.objects.count()        
+        except Exception as e:
+            print(e)
+            context = {'errMsg': '内部错误！'+str(e)}
+            return render(request, 'error/error.html', context)
+    else:
+        try:
+            print("search_keyword is Not None:")
+            listMasterConfig = master_config.objects.filter(Q(cluster_name__contains=search_keyword)|Q(master_host__contains=search_keyword)).order_by('-create_time')[offset:limit]
+            listMasterConfigNum = master_config.objects.filter(Q(cluster_name__contains=search_keyword)|Q(master_host__contains=search_keyword)).count()
+        except Exception as e:
+            print(e)
+            context = {'errMsg': '内部错误！'+str(e)}
+            return render(request, 'error/error.html', context)
+        
+    context = {'listMasterConfig':listMasterConfig, 'listMasterConfigNum':listMasterConfigNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT, 'search_keyword':search_keyword}    
     return render(request, 'inception/masterConfigList.html', context)
 
 # 新增数据库集群配置
@@ -621,4 +713,3 @@ def _getDetailUrl(request):
     scheme = request.scheme
     host = request.META['HTTP_HOST']
     return "%s://%s/detail/" % (scheme, host)
-

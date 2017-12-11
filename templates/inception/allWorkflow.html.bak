@@ -6,29 +6,51 @@
             <div class="col-sm-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-						<h5>工单列表(共{{listWorkflowNum}}项)</h5>
+						{% if navStatus == 'all' %}
+						<h5>全部工单(共{{listWorkflowNum}}项)</h5>
+						{% endif %}
+						
+						{% if role == '审核人' and navStatus == 'waitingforme' %}
+						<h5>待我审核的(共{{listWorkflowNum}}项)</h5>
+						{% endif %}
+						
+						{% if navStatus == 'finish' %}
+						<h5>已执行完毕(共{{listWorkflowNum}}项)</h5>
+						{% endif %}
+						
+						{% if navStatus == 'executing' %}
+						<h5>执行中(共{{listWorkflowNum}}项)</h5>
+						{% endif %}
+						
+						{% if navStatus == 'abort' %}
+						<h5>人工终止流程(共{{listWorkflowNum}}项)</h5>
+						{% endif %}
+						
+						{% if navStatus == 'autoreviewwrong' %}
+						<h5>自动审核不通过的(共{{listWorkflowNum}}项)</h5>
+						{% endif %}
+
                         <div class="ibox-tools">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                	<span>工单类型选择</span>
+                                	<span><i class="caret"></i></span>
+                            </a>
+							<ul class="dropdown-menu">
+								<li><a href="/inception/allworkflow/?pageNo=0&navStatus=all">全部工单</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="/inception/allworkflow/?pageNo=0&navStatus=waitingforme">待我审核的</a></li>
+								<li><a href="/inception/allworkflow/?pageNo=0&navStatus=finish">已执行完毕</a></li>
+								<li><a href="/inception/allworkflow/?pageNo=0&navStatus=executing">执行中</a></li>
+								<li><a href="/inception/allworkflow/?pageNo=0&navStatus=abort">人工终止流程</a></li>
+								<li><a href="/inception/allworkflow/?pageNo=0&navStatus=autoreviewwrong">自动审核不通过的</a></li>							
+                            </ul>
+                                                
                         </div>
                     </div>
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-sm-3">
-                            	<form id="workOrderSearchForm" method="get" class="form-horizontal" role="form">
-                            	{% csrf_token %}							                           
-	                                <div class="input-group">
-	                                	{% if search_keyword == '' %}
-	                                    <input type="text" placeholder="请输入关键词(工单状态或工单名称或工单内容)" class="input-sm form-control" id="search_keyword" name="search_keyword" value="">
-	                                    {% else %}
-	                                    <input type="text" placeholder="请输入关键词(工单状态或工单名称或工单内容)" class="input-sm form-control" id="search_keyword" name="search_keyword" value="{{search_keyword}}">
-	                                    {% endif %}
-	                                    <span class="input-group-btn">
-	                                    	<button type="submit" class="btn btn-sm btn-primary">搜索</button>
-	                                    </span>
-	                                </div>
-                                </form>
-                            </div>                      
-                        	<div class="col-sm-offset-8 col-sm-1">
-                        		<a type="button" id="add-work-order" href="javascript:void(0);" onclick="addWorkOrder()" class="btn btn-primary" style="width:100%;">新建工单</a>
+                        	<div class="col-sm-3">
+                        		<a type="button" id="add-work-order" href="javascript:void(0);" onclick="addWorkOrder()" class="btn btn-primary">新建工单</a>
                         	</div>
                         </div>
                         <table class="table table-striped table-bordered table-hover dataTables-example" id="editable">
@@ -78,30 +100,30 @@
 							<nav aria-label="Page navigation">
 							  <ul class="pagination">
 							    <li>
-							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"-1"}}&search_keyword={{search_keyword}}" aria-label="Previous">
+							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"-1"}}&navStatus={{navStatus}}" aria-label="Previous">
 							    	<span aria-hidden="true">&laquo;</span>
 							    	</a>
 							    </li>
 							    <li class="active">
-							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"0"}}&search_keyword={{search_keyword}}">{{pageNo|add:"1"}}</a>
+							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"0"}}&navStatus={{navStatus}}">{{pageNo|add:"1"}}</a>
 							    </li>
 							    
 							    {% if listWorkflow|length >= PAGE_LIMIT %}
 							    <li>
-							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"1"}}&search_keyword={{search_keyword}}">{{pageNo|add:"2"}}</a>
+							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"1"}}&navStatus={{navStatus}}">{{pageNo|add:"2"}}</a>
 							    </li>
 							    <li>
-									<a href="/inception/allworkflow/?pageNo={{pageNo|add:"2"}}&search_keyword={{search_keyword}}">{{pageNo|add:"3"}}</a>
+									<a href="/inception/allworkflow/?pageNo={{pageNo|add:"2"}}&navStatus={{navStatus}}">{{pageNo|add:"3"}}</a>
 								</li>
 							    <li>
-							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"3"}}&search_keyword={{search_keyword}}">{{pageNo|add:"4"}}</a>
+							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"3"}}&navStatus={{navStatus}}">{{pageNo|add:"4"}}</a>
 							    </li>
 							    <li>
-							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"4"}}&search_keyword={{search_keyword}}">{{pageNo|add:"5"}}</a>
+							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"4"}}&navStatus={{navStatus}}">{{pageNo|add:"5"}}</a>
 							    </li>
 					    
 							    <li>
-							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"1"}}&search_keyword={{search_keyword}}" aria-label="Next">
+							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"1"}}&navStatus={{navStatus}}" aria-label="Next">
 							    		<span aria-hidden="true">&raquo;</span>
 							    	</a>
 							    </li>
