@@ -114,7 +114,7 @@ cd dbsupport && python3 manage.py createsuperuser
 6. 工单统计图表：
 ![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/工单统计页.jpg)
 8.pt-osc进度条，以及中止pt-osc进程按钮：
-![image](https://raw.githubusercontent.com/johnliu2008/dbsupport/master/screenshots/osc_progress.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/osc_progress.png)
 
 ### 联系方式：
 QQ群：243305010
