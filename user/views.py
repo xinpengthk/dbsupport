@@ -6,6 +6,7 @@ from django.db.models.query_utils import Q
 from django.shortcuts import render
 
 from user.models import users
+from utils.pagination import getPageLimitOffset
 
 
 # from .aes_decryptor import Prpcrypt
@@ -30,38 +31,45 @@ def changePasswd(request):
 
 
 def getUserList(request):
+# 
+#     search_keyword = request.GET.get('search_keyword')
+# 
+#     if search_keyword is None:
+#         search_keyword = ''
+#     
+#     search_keyword = search_keyword.strip()
+# 
+#     print("search_keyword:",search_keyword)
+# 
+#     PAGE_LIMIT = 15
+# 
+#     #参数检查
+#     if 'pageNo' in request.GET:
+#         pageNo = request.GET['pageNo']
+#     else:
+#         pageNo = '0'
+#         
+#     if not isinstance(pageNo, str):
+#         raise TypeError('pageNo页面传入参数不对')
+#     else:
+#         try:
+#             pageNo = int(pageNo)
+#             if pageNo < 0:
+#                 pageNo = 0
+#         except ValueError as ve:
+#             print(ve)
+#             context = {'errMsg': 'pageNo参数不是int.'}
+#             return render(request, 'error/error.html', context)
+# 
+#     offset = pageNo * PAGE_LIMIT
+#     limit = offset + PAGE_LIMIT
 
-    search_keyword = request.GET.get('search_keyword')
-
-    if search_keyword is None:
-        search_keyword = ''
-    
-    search_keyword = search_keyword.strip()
-
-    print("search_keyword:",search_keyword)
-
-    PAGE_LIMIT = 15
-
-    #参数检查
-    if 'pageNo' in request.GET:
-        pageNo = request.GET['pageNo']
-    else:
-        pageNo = '0'
-        
-    if not isinstance(pageNo, str):
-        raise TypeError('pageNo页面传入参数不对')
-    else:
-        try:
-            pageNo = int(pageNo)
-            if pageNo < 0:
-                pageNo = 0
-        except ValueError as ve:
-            print(ve)
-            context = {'errMsg': 'pageNo参数不是int.'}
-            return render(request, 'error/error.html', context)
-
-    offset = pageNo * PAGE_LIMIT
-    limit = offset + PAGE_LIMIT
+    paginationList = getPageLimitOffset(request)
+    search_keyword = paginationList.get('search_keyword')
+    offset = paginationList.get('offset')
+    limit = paginationList.get('limit')
+    pageNo = paginationList.get('pageNo')
+    PAGE_LIMIT = paginationList.get('PAGE_LIMIT')
    
     # 查询
     listUser = []

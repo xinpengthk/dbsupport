@@ -15,6 +15,7 @@ from inception.dao import Dao
 from inception.inception import InceptionDao
 from inception.models import sql_order, master_config
 from user.models import users
+from utils.pagination import getPageLimitOffset
 from utils.sendmail import MailSender
 
 
@@ -118,42 +119,50 @@ def allworkflow(request):
 def getWorkOrderList(request):  
     # 为前端用户提供
     
-    search_keyword = request.GET.get('search_keyword')
+#     search_keyword = request.GET.get('search_keyword')
+# 
+#     if search_keyword is None:
+#         search_keyword = ''
+#     
+#     search_keyword = search_keyword.strip()
+# 
+#     print("search_keyword:",search_keyword)
+#         
+#     #一个页面展示
+#     PAGE_LIMIT = 15
+#     pageNo = 0
+# 
+#     #参数检查
+#     if 'pageNo' in request.GET:
+#         pageNo = request.GET['pageNo']
+#     else:
+#         pageNo = '0'
+#     
+#     if not isinstance(pageNo, str):
+#         raise TypeError('pageNo或navStatus页面传入参数不对')
+#     else:
+#         try:
+#             pageNo = int(pageNo)
+#             if pageNo < 0:
+#                 pageNo = 0
+#         except ValueError as ve:
+#             print(ve)
+#             context = {'errMsg': 'pageNo参数不是int.'+str(ve)}
+#             return render(request, 'error/error.html', context)
+# 
+#     loginUser = request.session.get('login_username', False)
+#     #查询workflow model，根据pageNo和navStatus获取对应的内容
+#     offset = pageNo * PAGE_LIMIT
+#     limit = offset + PAGE_LIMIT
 
-    if search_keyword is None:
-        search_keyword = ''
+    paginationList = getPageLimitOffset(request)
+    search_keyword = paginationList.get('search_keyword')
+    offset = paginationList.get('offset')
+    limit = paginationList.get('limit')
+    pageNo = paginationList.get('pageNo')
+    PAGE_LIMIT = paginationList.get('PAGE_LIMIT')
     
-    search_keyword = search_keyword.strip()
-
-    print("search_keyword:",search_keyword)
-        
-    #一个页面展示
-    PAGE_LIMIT = 15
-
-    pageNo = 0
-
-    #参数检查
-    if 'pageNo' in request.GET:
-        pageNo = request.GET['pageNo']
-    else:
-        pageNo = '0'
-    
-    if not isinstance(pageNo, str):
-        raise TypeError('pageNo或navStatus页面传入参数不对')
-    else:
-        try:
-            pageNo = int(pageNo)
-            if pageNo < 0:
-                pageNo = 0
-        except ValueError as ve:
-            print(ve)
-            context = {'errMsg': 'pageNo参数不是int.'+str(ve)}
-            return render(request, 'error/error.html', context)
-
     loginUser = request.session.get('login_username', False)
-    #查询workflow model，根据pageNo和navStatus获取对应的内容
-    offset = pageNo * PAGE_LIMIT
-    limit = offset + PAGE_LIMIT
 
     #修改全部工单、审核不通过、已执行完毕界面工程师只能看到自己发起的工单，审核人可以看到全部
     listWorkflow = []
@@ -489,37 +498,44 @@ def charts(request):
 #数据库集群展示
 def masterConfigList(request):
 
-    search_keyword = request.GET.get('search_keyword')
+#     search_keyword = request.GET.get('search_keyword')
+# 
+#     if search_keyword is None:
+#         search_keyword = ''
+#     
+#     search_keyword = search_keyword.strip()
+# 
+#     print("search_keyword:",search_keyword)
+# 
+#     PAGE_LIMIT = 15
+# 
+#     #参数检查
+#     if 'pageNo' in request.GET:
+#         pageNo = request.GET['pageNo']
+#     else:
+#         pageNo = '0'
+# 
+#     if not isinstance(pageNo, str):
+#         raise TypeError('pageNo页面传入参数不对')
+#     else:
+#         try:
+#             pageNo = int(pageNo)
+#             if pageNo < 0:
+#                 pageNo = 0
+#         except ValueError as ve:
+#             print(ve)
+#             context = {'errMsg': 'pageNo参数不是int.'}
+#             return render(request, 'error/error.html', context)
+# 
+#     offset = pageNo * PAGE_LIMIT
+#     limit = offset + PAGE_LIMIT
 
-    if search_keyword is None:
-        search_keyword = ''
-    
-    search_keyword = search_keyword.strip()
-
-    print("search_keyword:",search_keyword)
-
-    PAGE_LIMIT = 15
-
-    #参数检查
-    if 'pageNo' in request.GET:
-        pageNo = request.GET['pageNo']
-    else:
-        pageNo = '0'
-
-    if not isinstance(pageNo, str):
-        raise TypeError('pageNo页面传入参数不对')
-    else:
-        try:
-            pageNo = int(pageNo)
-            if pageNo < 0:
-                pageNo = 0
-        except ValueError as ve:
-            print(ve)
-            context = {'errMsg': 'pageNo参数不是int.'}
-            return render(request, 'error/error.html', context)
-
-    offset = pageNo * PAGE_LIMIT
-    limit = offset + PAGE_LIMIT
+    paginationList = getPageLimitOffset(request)
+    search_keyword = paginationList.get('search_keyword')
+    offset = paginationList.get('offset')
+    limit = paginationList.get('limit')
+    pageNo = paginationList.get('pageNo')
+    PAGE_LIMIT = paginationList.get('PAGE_LIMIT')
    
     # 查询
     listMasterConfig = []
@@ -553,38 +569,45 @@ def addMasterConfigForm(request):
 
 # 查询工单（admin用户）（搜索问题）
 def getSqlWorkOrderList(request):
+# 
+#     search_keyword = request.GET.get('search_keyword')
+# 
+#     if search_keyword is None:
+#         search_keyword = ''
+#     
+#     search_keyword = search_keyword.strip()
+# 
+#     print("search_keyword:",search_keyword)
+# 
+#     PAGE_LIMIT = 15
+# 
+#     #参数检查
+#     if 'pageNo' in request.GET:
+#         pageNo = request.GET['pageNo']
+#     else:
+#         pageNo = '0'
+#         
+#     if not isinstance(pageNo, str):
+#         raise TypeError('pageNo页面传入参数不对')
+#     else:
+#         try:
+#             pageNo = int(pageNo)
+#             if pageNo < 0:
+#                 pageNo = 0
+#         except ValueError as ve:
+#             print(ve)
+#             context = {'errMsg': 'pageNo参数不是int.'}
+#             return render(request, 'error/error.html', context)
+# 
+#     offset = pageNo * PAGE_LIMIT
+#     limit = offset + PAGE_LIMIT
 
-    search_keyword = request.GET.get('search_keyword')
-
-    if search_keyword is None:
-        search_keyword = ''
-    
-    search_keyword = search_keyword.strip()
-
-    print("search_keyword:",search_keyword)
-
-    PAGE_LIMIT = 15
-
-    #参数检查
-    if 'pageNo' in request.GET:
-        pageNo = request.GET['pageNo']
-    else:
-        pageNo = '0'
-        
-    if not isinstance(pageNo, str):
-        raise TypeError('pageNo页面传入参数不对')
-    else:
-        try:
-            pageNo = int(pageNo)
-            if pageNo < 0:
-                pageNo = 0
-        except ValueError as ve:
-            print(ve)
-            context = {'errMsg': 'pageNo参数不是int.'}
-            return render(request, 'error/error.html', context)
-
-    offset = pageNo * PAGE_LIMIT
-    limit = offset + PAGE_LIMIT
+    paginationList = getPageLimitOffset(request)
+    search_keyword = paginationList.get('search_keyword')
+    offset = paginationList.get('offset')
+    limit = paginationList.get('limit')
+    pageNo = paginationList.get('pageNo')
+    PAGE_LIMIT = paginationList.get('PAGE_LIMIT')
    
     # 查询
     listSqlOrder = []
@@ -635,60 +658,6 @@ def getSqlWorkOrderDetail(request, sqlOrderId):
 
     context = {'sqlOrderDetail':sqlOrderDetail, 'listContent':listContent,'listAllReviewMen':listAllReviewMen}
     return render(request, 'inception/sqlWorkOrderDetail.html', context) 
-# 
-# #查询工单
-# def sqlWorkOrderSearch(request):
-#     PAGE_LIMIT = 15
-#     search_keyword = request.POST.get('search_keyword')
-#     print("查询关键字", search_keyword)
-#     
-#     #参数检查
-#     if 'pageNo' in request.GET:
-#         pageNo = request.GET['pageNo']
-#     else:
-#         pageNo = '0'
-# 
-#     if not isinstance(pageNo, str):
-#         raise TypeError('pageNo页面传入参数不对')
-#     else:
-#         try:
-#             pageNo = int(pageNo)
-#             if pageNo < 0:
-#                 pageNo = 0
-#         except ValueError as ve:
-#             print(ve)
-#             context = {'errMsg': 'pageNo参数不是int.'}
-#             return render(request, 'error/error.html', context)
-# 
-#     offset = pageNo * PAGE_LIMIT
-#     limit = offset + PAGE_LIMIT
-#    
-#     # 查询
-#     listSqlOrder = []
-#     listSqlOrderNum = 0
-# 
-#     #服务器端参数验证
-#     if search_keyword is None or search_keyword == "":
-#         try:
-#             listSqlOrder = sql_order.objects.all().order_by('-create_time')[offset:limit]
-#             listSqlOrderNum = sql_order.objects.count()        
-#         except Exception as e:
-#             print(e)
-#             context = {'errMsg': '内部错误！'}
-#             return render(request, 'error/error.html', context)
-#     else:
-#         try:
-#             listSqlOrder = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).order_by('-create_time')[offset:limit]
-#             listSqlOrderNum = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).count()       
-#         except Exception as e:
-#             print(e)
-#             context = {'errMsg': '内部错误！'}
-#             return render(request, 'error/error.html', context)
-# 
-#     
-#     context = {'listSqlOrder':listSqlOrder, 'listSqlOrderNum':listSqlOrderNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT}
-#     
-#     return render(request, 'inception/sqlWorkOrderlist.html', context)
 
 #根据集群名获取主库连接字符串，并封装成一个dict
 def getMasterConnStr(clusterName):

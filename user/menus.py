@@ -25,27 +25,21 @@ leftMenusGeneral = {
 #             'url':'/inception/dbaprinciples/',
 #             },               
         ],
-    'REDIS管理':[
-            {'key':'allworkflow',
-             'name':'查询键值',
-             'url':'/redis/getkey/',
-             },        
-        ],
+#     'REDIS管理':[
+#             {'key':'allworkflow',
+#              'name':'查询键值',
+#              'url':'/redis/getkey/',
+#              },        
+#         ],
 }
 
 leftMenusSuper = {
-    '后台管理':[
+    'INCEPTION 后台管理':[
             {'key':'masterconfig',
             'name':'主库地址配置',
 #             'url':'/admin/inception/master_config/',
             'url':'/inception/masterConfigList/',
             'sort':3,
-            'role':'super'
-            },
-            {'key':'userconfig',
-            'name':'用户权限配置',
-            'url':'/user/getUserList/',
-            'sort':4,
             'role':'super'
             },
             {'key':'workflowconfig',
@@ -55,6 +49,14 @@ leftMenusSuper = {
             'role':'super'
             },
         ],
+    '用户管理':[
+            {'key':'userconfig',
+            'name':'用户权限配置',
+            'url':'/user/getUserList/',
+            'sort':4,
+            'role':'super'
+            },
+        ],                  
 }
 
 def getMenus(request):

@@ -6,7 +6,7 @@ from utils import AesCharField
 
 #各个线上主库地址。
 class master_config(models.Model):
-    cluster_name = models.CharField('集群名称', max_length=50)
+    cluster_name = models.CharField('集群名称', max_length=50, db_index=True)
     master_host = models.CharField('主库地址', max_length=200)
     master_port = models.IntegerField('主库端口', default=3306)
     master_user = models.CharField('登录主库的用户名', max_length=100)
@@ -28,10 +28,10 @@ class master_config(models.Model):
 
 #存放各个SQL上线工单的详细内容，可定期归档或清理历史数据，也可通过alter table workflow row_format=compressed; 来进行压缩
 class sql_order(models.Model):
-    workflow_name = models.CharField('工单内容', max_length=128)
-    engineer = models.CharField('发起人', max_length=50)
+    workflow_name = models.CharField('工单内容', max_length=128, db_index=True)
+    engineer = models.CharField('发起人', max_length=50, db_index=True)
     review_man = models.CharField('审核人', max_length=50)
-    create_time = models.DateTimeField('创建时间', auto_now_add=True)
+    create_time = models.DateTimeField('创建时间', auto_now_add=True, db_index=True)
     finish_time = models.DateTimeField('结束时间', null=True, blank=True)
     status = models.CharField(max_length=50, choices=(('已正常结束','已正常结束'),('人工终止流程','人工终止流程'),('自动审核中','自动审核中'),('等待审核人审核','等待审核人审核'),('执行中','执行中'),('自动审核不通过','自动审核不通过'),('执行有异常','执行有异常')))
     #is_backup = models.IntegerField('是否备份，0为否，1为是', choices=((0,0),(1,1)))

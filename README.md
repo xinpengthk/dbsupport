@@ -1,9 +1,9 @@
 # dbsupport
-基于inception的自动化SQL操作平台，在 dbsupport 基础上进行二次开发
+基于inception的自动化SQL操作平台，在 archer 基础上进行二次开发
 
 ### 开发语言和推荐环境：
-python：3.4
-django：1.8.17
+python：3.6.0
+django：1.10.8
 mysql : 5.6.28
 linux : 64位linux操作系统均可
 
@@ -14,7 +14,7 @@ linux : 64位linux操作系统均可
   工单DBA人工审核、审核通过自动执行SQL.
   为什么要有人工审核？
   这是遵循运维领域线上操作的流程意识，一个工程师要进行线上数据库SQL更新，最好由另外一个工程师来把关.
-  很多时候DBA并不知道SQL的业务含义，所以人工审核最好由其他研发工程师或研发经理来审核. 这是dbsupport的设计理念.
+  很多时候DBA并不知道SQL的业务含义，所以人工审核最好由其他研发工程师或研发经理来审核. 这是archer的设计理念.
 * 回滚数据展示
 * 主库集群配置
 * 用户权限配置
@@ -39,23 +39,23 @@ linux : 64位linux操作系统均可
 (2)安装mysql 5.6实例，请注意保证mysql数据库默认字符集为utf8或utf8mb4
 (3)安装inception
 2. 安装python3：(强烈建议使用virtualenv或venv等单独隔离环境！)
-tar -xzvf Python-3.4.1.tar.gz 
-cd Python-3.4.1 
+tar -xzvf Python-3.6.0.tar.gz 
+cd Python-3.6.0 
 ./configure --prefix=/path/to/python3 && make && make install
 或者rpm、yum、binary等其他安装方式
 3. 安装所需相关模块：
 (1)django：
-tar -xzvf Django-1.8.17 && cd Django-1.8.17 && python3 setup.py install
-或者pip3 install Django==1.8.17
-(2)Crypto:
-pip3 install Crypto
+tar -xzvf Django-1.10.8 && cd Django-1.10.8 && python3 setup.py install
+或者pip3 install Django==1.10.8
+(2)pycrypto:
+#pip3 install Crypto
 pip3 install pycrypto
 4. 给python3安装MySQLdb模块:
 pip3 install pymysql
 记得确保settings.py里有如下两行：
 import pymysql
 pymysql.install_as_MySQLdb()
-由于python3使用的pymysql模块里并未兼容inception返回的server信息，因此需要编辑/path/to/python3/lib/python3.4/site-packages/pymysql/connections.py：
+由于python3使用的pymysql模块里并未兼容inception返回的server信息，因此需要编辑/path/to/python3/lib/python3.6/site-packages/pymysql/connections.py：
 在if int(self.server_version.split('.', 1)[0]) >= 5: 这一行之前加上以下这一句并保存，记得别用tab键用4个空格缩进：
 self.server_version = '5.6.24-72.2-log'
 最后看起来像这样：
@@ -99,20 +99,20 @@ cd dbsupport && python3 manage.py createsuperuser
 * docker镜像制作感谢@浩气冲天 协助
 
 ### 系统展示截图：
-1. 工单展示页：
-![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/allworkflow.png)
+1. 后台管理：
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/后台管理-工单管理.jpg)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/后台管理-主库地址管理.jpg)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/后台管理-用户管理.jpg)
 2. 自助审核SQL：
-![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/autoreview.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/工单自动审核.jpg)
 3. 提交SQL工单：
-![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/submitsql.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/工单提交申请.jpg)
 4. SQL自动审核、人工审核、执行结果详情页：
-![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/waitingforme.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/工单详情.jpg)
 5. 用户登录页：
-![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/login.png)
-6. 用户、集群、工单管理：
-![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/adminsqlusers.png)
-7. 工单统计图表：
-![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/charts.png)
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/登录页.jpg)
+6. 工单统计图表：
+![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/工单统计页.jpg)
 8.pt-osc进度条，以及中止pt-osc进程按钮：
 ![image](https://raw.githubusercontent.com/johnliu2008/dbsupport/master/screenshots/osc_progress.png)
 
