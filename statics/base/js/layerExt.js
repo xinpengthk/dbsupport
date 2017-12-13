@@ -253,6 +253,63 @@ function changeUserInfo(userId, userName, display, role, email, password, is_act
     });
 }
 
+// cmdb 类
+function addHost() {
+	 open_handle = layer.open({
+       type: 2,
+       title: '新增主机信息',
+ 	   shade: false,
+ 	   shadeClose: false,
+       maxmin: true,
+       area: ['800px', '850px'], //宽高
+       content: '/cmdb/addHostForm/',
+       end: function () {
+           location.reload();
+       }
+   });
+}
+
+function changeHostInfo(hostId) {
+	layer.open({
+        type: 2,
+        title: '修改主机信息',
+  	  	shade: false,
+  	  	shadeClose: false,
+        maxmin: true,
+        area: ['800px', '800px'], //宽高
+        content: '/cmdb/addHostForm/',
+        success: function(layero, index){
+        	var url = '/cmdb/getHostDetailInfo/'
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {hostId: hostId,},                
+    	        success: function (data) {
+    	            if (data.status == '1') {
+    	            	var hostObj = JSON.parse(data.obj);
+    	            	var body = layer.getChildFrame('body', index);
+    	                body.find("#hostId").val(hostObj.id);
+    	                body.find("#businessName").val(hostObj.businessName);
+    	                body.find("#serviceEnv").val(hostObj.serviceEnv);
+    	                body.find("#hostName").val(hostObj.hostName);
+    	                body.find("#intranetIpAddr").val(hostObj.intranetIpAddr);
+    	                body.find("#publicIpAddr").val(hostObj.publicIpAddr);
+    	                body.find("#sshPort").val(hostObj.sshPort);
+    	                body.find("#hostType").val(hostObj.hostType);
+    	                body.find("#hostRole").val(hostObj.hostRole);
+    	                body.find("#hostDesc").val(hostObj.hostDesc);              
+    	            } else {
+    	                layer.msg(data.msg + data.data, {icon: 2, time: 1000},function(){location.reload()});
+    	            }
+    	        }
+            });     
+        },
+        end: function () {
+            location.reload();
+        }
+    });
+}
+
 //function test(){
 //	layer.msg('hello',{icon:1, time:2000}, function(){
 //		location.reload()

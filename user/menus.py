@@ -56,7 +56,16 @@ leftMenusSuper = {
             'sort':4,
             'role':'super'
             },
-        ],                  
+        ], 
+    '服务器资源管理':[
+            {'key':'hostconfig',
+            'name':'主机管理',
+            'url':'/cmdb/getHostList/',
+            'sort':4,
+            'role':'super'
+            },
+        ],     
+                     
 }
 
 def getMenus(request):

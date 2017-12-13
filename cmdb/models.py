@@ -8,8 +8,12 @@ Created on 2017-09-08
 @Description: model
 '''
 
+import json
+
 from django.db import models
+
 from utils import AesCharField
+from utils.jsonExt import DateEncoder
 
 
 # Create your models here.
@@ -120,6 +124,17 @@ class host(models.Model):
 
     def __str__(self):
         return '【%s-%s-%s-%s-%s-%s】' %(self.serviceEnv, self.businessName, self.hostName, self.intranetIpAddr, self.hostType, self.hostRole)
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)
 
     class Meta:
         db_table = 'cmdb_host' 
@@ -184,6 +199,125 @@ class hostUser(models.Model):
         verbose_name = u'服务器用户密码'
         verbose_name_plural = u'服务器用户密码'
 
+class dbCluster(models.Model):
+    CLUSTER_STATUS_CHOICES = (
+        ('正常运行', '正常运行'),
+        ('已下线', '已下线'),
+        ('上线中', '上线中'),
+        ('计划维护中', '计划维护中'),
+        ('故障维护中', '故障维护中'),
+    )
+
+    clusterName = models.CharField(db_column='cluster_name',
+        max_length=128,
+        null=False,
+        blank=False,
+        verbose_name='集群名',
+        help_text='请输入集群名!'
+    )
+        
+    clusterStatus = models.CharField(db_column='cluster_status',
+        max_length=32,
+        choices=CLUSTER_STATUS_CHOICES,
+        verbose_name='集群状态',
+        help_text='请选择集群状态!'
+    )
+    
+    clusterDesc = models.TextField(db_column='cluster_dsec',
+        null=False,
+        blank=False,
+        verbose_name='集群说明',
+        help_text='请输入集群说明!'
+    )
+
+    createdTime = models.DateTimeField(db_column='created_time', 
+        blank=True,
+        null=True,
+        auto_now_add=True,
+        verbose_name='记录创建时间',
+        help_text='该记录创建时间!',
+    )
+    
+    updatedTime = models.DateTimeField(db_column='updated_time', 
+        blank=True,
+        null=True,
+        auto_now=True,
+        verbose_name='记录最后更新时间',
+        help_text='记录最后更新时间!',
+    )
+    
+    def __str__(self):
+        return '【%s】' %(self.clusterName)
+
+    class Meta:
+        db_table = 'cmdb_db_cluster' 
+        verbose_name = u'数据库集群'
+        verbose_name_plural = u'数据库集群'
+        
+class dbGroup(models.Model):
+    GROUP_STATUS_CHOICES = (
+        ('正常运行', '正常运行'),
+        ('已下线', '已下线'),
+        ('上线中', '上线中'),
+        ('计划维护中', '计划维护中'),
+        ('故障维护中', '故障维护中'),        
+    )
+
+    dbCluster = models.ForeignKey(
+        host,
+        on_delete=models.DO_NOTHING,
+        db_column='db_cluster',
+        db_index=False,
+        verbose_name='集群名',
+        help_text='请选择集群名',
+    )
+
+    groupName = models.CharField(db_column='group_name',
+        max_length=128,
+        null=False,
+        blank=False,
+        verbose_name='组名',
+        help_text='请输入组名!'
+    )
+        
+    groupStatus = models.CharField(db_column='group_status',
+        max_length=32,
+        choices=GROUP_STATUS_CHOICES,
+        verbose_name='组状态',
+        help_text='请选择租状态!'
+    )
+    
+    groupDesc = models.TextField(db_column='group_dsec',
+        null=False,
+        blank=False,
+        verbose_name='组说明',
+        help_text='请输入组说明!'
+    )
+
+    createdTime = models.DateTimeField(db_column='created_time', 
+        blank=True,
+        null=True,
+        auto_now_add=True,
+        verbose_name='记录创建时间',
+        help_text='该记录创建时间!',
+    )
+    
+    updatedTime = models.DateTimeField(db_column='updated_time', 
+        blank=True,
+        null=True,
+        auto_now=True,
+        verbose_name='记录最后更新时间',
+        help_text='记录最后更新时间!',
+    )
+    
+    def __str__(self):
+        return '【%s-%s】' %(self.dbCluster, self.groupName)
+
+    class Meta:
+        db_table = 'cmdb_db_group' 
+        verbose_name = u'数据库组'
+        verbose_name_plural = u'数据库组'        
+
 class dbInstance(models.Model):
     INSTANCE_ROLE_CHOICES = (
         ('SINGLE', 'SINGLE'),
@@ -208,6 +342,15 @@ class dbInstance(models.Model):
         
     )
 
+    groupName = models.ForeignKey(
+        dbGroup,
+        on_delete=models.DO_NOTHING,
+        db_column='db_group',
+        db_index=False,
+        verbose_name='分组',
+        help_text='请选择分组',
+        
+    )
     instanceName = models.CharField(db_column='instance_name',
         max_length=128,
         null=False,
