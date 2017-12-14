@@ -27,7 +27,7 @@
 	                                    </span>
 	                                </div>
                                 </form>
-                            </div>
+                            </div>                         
                             <div class="col-sm-offset-8 col-sm-1">
  								<a type="button" id="add-host" href="javascript:void(0);" onclick="addHost()" class="btn btn-primary" style="width:100%;">添加主机</a>
                             </div>                            
@@ -64,7 +64,8 @@
 	                                    <td class="center">{{host.createdTime|date:"Y-m-d H:i:s"}}</td>
 	                                    <td class="center">{{host.updatedTime|date:"Y-m-d H:i:s"}}</td>
 	                                    <td>
-	                                    	<a type="button" href="javascript:void(0);" onclick="getHostDetail({{host.id}})" class="show-host-detail">查看详情</a>|
+	                                    	<a type="button" href="javascript:void(0);" onclick="getHostDetail({{host.id}})" class="show-host-detail">详情</a>|
+<!-- 	                                    	<a type="button" href="javascript:void(0);" onclick="addHostUser({{host.id}})" class="add-host-user">添加用户</a>| -->
 	                                    	<a type="button" href="javascript:void(0);" onclick="changeHostInfo({{host.id}})" class="change-host">修改</a>|
 											<a type="button" href="javascript:void(0);" onclick="delHost({{host.id}})" class="del-host">删除</a>
 										</td>

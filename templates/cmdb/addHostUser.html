@@ -1,0 +1,49 @@
+{% extends "base/iframeBase.html" %}
+
+{% block content %}
+		<!--添加配置项弹出层 begin-->
+		<div id="addHostUser" class="row wrapper border-bottom white-bg page-heading">
+		    <div class="row">
+		        <div class="col-lg-12">
+		            <div class="ibox float-e-margins">          
+		                <div class="ibox-content">    
+		                	<form class="form-horizontal m-t" id="addHostUserForm">
+		                		{% csrf_token %}
+		                		<input type="hidden" class="form-control" id="hostId" name="hostId" value="">
+		                		<input type="hidden" class="form-control" id="hostUserId" name="hostUserId" value="">		                		       
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">用户名：</label>
+			                        <div class="col-sm-6">
+			                            <input type="text" class="form-control" id="hostUser" name="hostUser">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入用户名！</span>
+			                        </div>
+			                    </div>		                    
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">密码:</label>
+			                        <div class="col-sm-6">
+			                            <input type="password" class="form-control" id="hostPasswd" name="hostPasswd">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入密码!</span> 
+			                        </div>
+			                    </div>
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">用户说明:</label>
+			                        <div class="col-sm-6">
+			                            <textarea class="form-control" name="userDesc" id="userDesc"></textarea>
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入用户说明!</span> 
+			                        </div>
+			                    </div>
+			                    <div class="hr-line-dashed"></div>
+			                    <div class="form-group">
+			                        <div class="col-sm-4 col-sm-offset-4">
+			                            <button class="btn btn-primary addHostUser" type='submit'>保存内容</button>
+			                            <span class="help-block m-b-none red-bg" id="showmsg"></span>
+			                        </div>
+			                    </div>
+			            	</form>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+
+{% endblock content%}

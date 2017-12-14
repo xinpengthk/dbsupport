@@ -1,0 +1,103 @@
+{% extends "base/iframeBase.html" %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+						<h4>主机名：<span id="hostName">{{hostObj.hostName}}</span></h4>				
+                    </div>
+                    <div class="ibox-content">
+<!--                         <div class=""> -->
+<!--                             <a onclick="fnClickAddRow();" href="javascript:void(0);" class="btn btn-primary ">添加行</a> -->
+<!--                         </div> -->
+                        <table class="table table-striped table-bordered table-hover " id="editable">
+                            <thead>
+                                <tr>
+                                    <th>服务器ID</th>
+                                    <th>业务线名称</th>
+                                    <th>服务器环境</th>
+                                    <th>主机名</th>
+                                    <th>内网IP地址</th>
+                                    <th>公网IP地址</th>
+                                    <th>SSH端口号</th>
+                                    <th>服务器类型</th>
+                                    <th>服务器角色</th>
+                                    <th>服务器说明</th>
+                                    <th>记录创建时间</th>
+                                    <th>记录最后更新时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+								<tr class="gradeX">
+	                            	<td>{{hostObj.id}}</td>
+	                                <td>{{hostObj.businessName}}</td>
+	                                <td>{{hostObj.serviceEnv}}</td>
+	                                <td class="center">{{host.hostName}}</td>
+	                                <td>{{hostObj.intranetIpAddr}}</td>
+	                                <td>{{hostObj.publicIpAddr}}</td>
+	                                <td>{{hostObj.sshPort}}</td>
+	                                <td>{{hostObj.hostType}}</td>
+	                                <td>{{hostObj.hostRole}}</td>
+	                                <td>{{hostObj.hostDesc}}</td>
+	                                <td class="center">{{hostObj.createdTime|date:"Y-m-d H:i:s"}}</td>
+	                                <td class="center">{{hostObj.updatedTime|date:"Y-m-d H:i:s"}}</td>
+								</tr>
+                            </tbody>
+                        </table>
+
+                    </div>		
+                </div>
+            </div>
+        </div>
+        
+        
+	<div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+						<h4>服务器用户信息：</h4>			
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">                       
+                            <div class="col-sm-3">
+ 								<a type="button" id="add-host-user" href="javascript:void(0);" onclick="addHostUser({{hostObj.id}})" class="btn btn-primary">添加用户</a>
+                            </div>                            
+                        </div>                    
+                        <table class="table table-striped table-bordered table-hover " id="editable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>用户名</th>
+                                    <th>密码</th>
+                                    <th>备注</th>
+                                    <th>记录创建时间</th>
+                                    <th>记录最后更新时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+								{% for hostUser in hostUserList %}
+								<tr class="gradeX">
+									<td>{{hostUser.id}}</td>
+									<td>{{hostUser.hostUser}}</td>
+									<td>{{hostUser.hostPasswd}}</td>
+									<td>{{hostUser.userDesc}}</td>
+	                                <td class="center">{{hostUser.createdTime|date:"Y-m-d H:i:s"}}</td>
+	                                <td class="center">{{hostUser.updatedTime|date:"Y-m-d H:i:s"}}</td>
+	                                <td>
+	                                    <a type="button" href="javascript:void(0);" onclick="changeHostUserInfo({{hostObj.id}}, {{hostUser.id}}, '{{hostUser.hostUser}}', '{{hostUser.hostPasswd}}', '{{hostUser.userDesc}}')" class="change-host-user">修改</a>|
+										<a type="button" href="javascript:void(0);" onclick="delHostUser({{hostUser.id}})" class="del-host-user">删除</a>	                                
+	                                </td>
+								</tr>
+								{% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>		
+                </div>
+            </div>
+        </div>        
+    </div>
+{% endblock content%}

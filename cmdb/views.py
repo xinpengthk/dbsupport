@@ -1,11 +1,13 @@
 import math
 
 from django.db.models.query_utils import Q
-from django.shortcuts import render
-
-from cmdb.models import host
+from django.shortcuts import render, get_object_or_404
+from cmdb.models import host, hostUser
 from utils.pagination import getPageLimitOffset
+from utils.logUtil import getLogger
 
+
+logger = getLogger()
 
 # Create your views here.
 def getHostList(request):
@@ -51,3 +53,20 @@ def getHostList(request):
 
 def addHostForm(request):
     return render(request, 'cmdb/addHost.html')
+
+def addHostUserForm(request):
+    return render(request, 'cmdb/addHostUser.html')
+
+def getHostDetail(request, hostId):
+
+    if hostId is not None and hostId != '': 
+        try:
+            hostObj = host.objects.get(id=hostId)
+            hostUserList = hostObj.hostuser_set.all()
+            context = {'hostObj':hostObj, 'hostUserList':hostUserList}
+        except Exception as e:
+            logger.error(str(e))
+            context = {'errMsg': '内部错误！'}
+            return render(request, 'error/error.html', context)                
+
+    return render(request, 'cmdb/hostDetail.html', context) 

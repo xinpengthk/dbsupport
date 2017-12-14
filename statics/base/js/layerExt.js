@@ -310,11 +310,101 @@ function changeHostInfo(hostId) {
     });
 }
 
-//function test(){
-//	layer.msg('hello',{icon:1, time:2000}, function(){
-//		location.reload()
-//	})
-//	
-//}
+function delHost(id) {
+    url = '/cmdb/delHost/';
+    layer.confirm('你确定要删除吗？', {
+        btn: ['确定', '取消'] //按钮
+    }, function () {
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: {hostId:id},
+	        success: function (data) {
+	            if (data.status == '1') {
+	            	layer.msg(data.msg, {icon: 1, time: 1000},function(){location.reload()});
+	            } else {
+	                layer.msg(data.msg + data.data, {icon: 2, time: 1000},function(){location.reload()});
+	            }
+	        }
+        });
+    });
+}
 
 
+function addHostUser(hostId) {
+	 open_handle = layer.open({
+      type: 2,
+      title: '新增主机用户信息',
+	  shade: false,
+	  shadeClose: false,
+      maxmin: true,
+      area: ['800px', '400px'], //宽高
+      content: '/cmdb/addHostUserForm/',
+      success: function(layero, index){
+      	var body = layer.getChildFrame('body', index);
+        body.find("#hostId").val(hostId);
+      },
+      end: function () {
+          location.reload();
+      }
+  });
+}
+
+//
+function getHostDetail(hostId) {
+	layer.open({
+        type: 2,
+        title: '主机详情',
+  	  	shade: false,
+  	  	shadeClose: false,
+        maxmin: true,
+        area: ['1200px', '800px'], //宽高
+        content: '/cmdb/getHostDetail/' + hostId  + '/',
+//        end: function () {
+//        	location.reload();
+//        }
+    });
+}
+
+function changeHostUserInfo(hostId, hostUserId, hostUser, hostUserPasswd, hostUserDesc) {
+	layer.open({
+        type: 2,
+        title: '修改主机用户信息',
+  	  	shade: false,
+  	  	shadeClose: false,
+        maxmin: true,
+        area: ['800px', '450px'], //宽高
+        content: '/cmdb/addHostUserForm/',
+        success: function(layero, index){
+    	            var body = layer.getChildFrame('body', index);
+    	            body.find("#hostId").val(hostId);
+    	            body.find("#hostUserId").val(hostUserId);
+    	            body.find("#hostUser").val(hostUser);
+    	            body.find("#hostPasswd").val(hostUserPasswd);
+    	            body.find("#userDesc").val(hostUserDesc);
+        },
+        end: function () {
+            location.reload();
+        }
+    });
+}
+
+function delHostUser(v_hostUserId) {
+    url = '/cmdb/delHostUser/';
+    layer.confirm('你确定要删除吗？', {
+        btn: ['确定', '取消'] //按钮
+    }, function () {
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: {hostUserId:v_hostUserId},
+	        success: function (data) {
+	            if (data.status == '1') {
+	            	layer.msg(data.msg, {icon: 1, time: 1000},function(){location.reload()});
+	            } else {
+	                layer.msg(data.msg + data.data, {icon: 2, time: 1000},function(){location.reload()});
+	            }
+	        }
+        });
+    });
+}

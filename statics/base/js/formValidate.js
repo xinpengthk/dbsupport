@@ -531,3 +531,61 @@ $().ready(function() {
 		invalidHandler: function(form, validator) {return false;}
 	}); 
 });
+
+
+//添加主机用户
+$().ready(function() {
+	$("#addHostUserForm").validate({
+		onsubmit:true,// 是否在提交时验证
+		onfocusout:false,// 是否在获取焦点时验证
+		onkeyup :false,// 是否在敲击键盘时验证
+		rules: {
+			hostUser: {
+		        required: true,
+		        maxlength: 64,
+		    },
+		    hostPasswd: {
+		        required: true,
+		        maxlength: 300,
+		    },
+		    userDesc: {
+		        required: true,
+		    },    
+		},
+		submitHandler: function(form) { // 通过之后回调
+			var v_hostUserId = $('#hostUserId').val();
+			var v_hostId = $('#hostId').val();
+			var v_hostUser = $('#hostUser').val();
+			var v_hostPasswd = $("#hostPasswd").val();
+			var v_userDesc = $("#userDesc").val();
+			
+			url = '/cmdb/addChangeHostUserInfo/'
+		    
+		    $.ajax({
+		        type: "POST",
+		        url: url,
+		        data: {
+		        	host_user_id : v_hostUserId,
+		        	host_id : v_hostId,
+		        	host_user : v_hostUser,
+		        	host_passwd : v_hostPasswd,
+		        	user_desc : v_userDesc,
+		        },
+		        success: function (data) {
+		            if (data.status == '1') {
+		            	layer.msg(data.msg, 
+		            			 {icon:1},
+		            			 function(){
+		            				 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		            				 parent.layer.close(index); //再执行关闭  
+		            			   }
+		            			 );
+		            } else {
+		                layer.msg(data.msg + data.data, {icon: 2});
+		            }
+		        }
+		    });
+		},
+		invalidHandler: function(form, validator) {return false;}
+	}); 
+});

@@ -194,6 +194,17 @@ class hostUser(models.Model):
     def __str__(self):
         return self.hostUser
 
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)    
+
     class Meta:
         db_table = 'cmdb_host_user' 
         verbose_name = u'服务器用户密码'
@@ -248,6 +259,17 @@ class dbCluster(models.Model):
     
     def __str__(self):
         return '【%s】' %(self.clusterName)
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)    
 
     class Meta:
         db_table = 'cmdb_db_cluster' 
@@ -312,6 +334,17 @@ class dbGroup(models.Model):
     
     def __str__(self):
         return '【%s-%s】' %(self.dbCluster, self.groupName)
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)    
 
     class Meta:
         db_table = 'cmdb_db_group' 
@@ -407,6 +440,17 @@ class dbInstance(models.Model):
     
     def __str__(self):
         return '【%s-%s-%s-%s】' %(self.host, self.instanceType, self.instanceName, self.instanceRole)
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)    
 
     class Meta:
         db_table = 'cmdb_db_instance' 
@@ -457,6 +501,17 @@ class dbDatabase(models.Model):
 
     def __str__(self):
         return self.dbName
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)    
 
     class Meta:
         db_table = 'cmdb_db_database' 
@@ -499,6 +554,17 @@ class dbPrivilege(models.Model):
 
     def __str__(self):
         return self.privName
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)    
 
     class Meta:
         db_table = 'cmdb_db_privs' 
@@ -589,6 +655,17 @@ class dbUser(models.Model):
 
     def __str__(self):
         return '[%s-%s]' %(self.instance, self.userName)
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)    
 
 
 #     def save(self, *args, **kwargs):
