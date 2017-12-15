@@ -127,3 +127,28 @@ QQ群：243305010
 解决：如果实在忍受不了，请修改/path/to/python3/lib/python3.4/site-packages/pymysql/cursors.py:338行，将self._show_warnings()这一句注释掉，换成pass，如下：
 ![image](https://github.com/xinpengthk/dbsupport/blob/master/screenshots/bugs/bug3.png)
 但是此方法有副作用，会导致所有调用该pymysql模块的程序不能show warnings，因此强烈推荐使用virtualenv或venv环境！
+
+### 疑问：
+1. osc 会产生那些临时表
+实验步骤：
+1. 创建大表
+	create table dmsfile like dms_file;
+	ALTER TABLE `test_db`.`dmsfile` 
+	CHANGE COLUMN `id` `id` INT(11) NOT NULL ,
+	DROP PRIMARY KEY;
+	
+	insert into dmsfile select * from dms_file;
+	commit;
+	insert into dmsfile select * from dms_file;
+	commit;
+	
+	alter table dmsfile add COLUMN id1 int primary key AUTO_INCREMENT;
+2. 生成的临时表：
+_dmsfile1_new.frm
+_dmsfile1_new.MYD
+_dmsfile1_new.MYI
+dmsfile1.TRG
+pt_osc_test_db_dmsfile1_del.TRN
+pt_osc_test_db_dmsfile1_ins.TRN
+pt_osc_test_db_dmsfile1_upd.TRN
+

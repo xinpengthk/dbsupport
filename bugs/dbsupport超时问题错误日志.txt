@@ -1,0 +1,289 @@
+﻿## 问题复现步骤
+1. def execute(request): 该方法打断点
+2. 当执行到 (finalStatus, finalList) = inceptionDao.executeFinal(workflowDetail, dictConn) 该行时进入方法
+3. 当执行到  executeResult = self._fetchall(sqlExecute, self.inception_host, self.inception_port, '', '', '') 该方法时进入
+4. 执行ret=cur.execute(sql)该行语句之前进行锁标操作（变更的表，认为让执行时间加长），过5分钟左右在执行
+5. 此时就会报已下错误，图片为dbsupport超时问题.jpg
+
+2017-12-15 19:46:14,603 ERROR (C:\Python36\lib\site-packages\django\core\handlers\exception.py, exception, handle_uncaught_exception, 132): Internal Server Error: /inception/execute/
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+pymysql.err.OperationalError: (2013, 'Lost connection to MySQL server during query')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 249, in _legacy_get_response
+    response = self._get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\pyworkspace\dbsupport\inception\views.py", line 371, in execute
+    workflowDetail.save()
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 796, in save
+    force_update=force_update, update_fields=update_fields)
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 821, in save_base
+    with transaction.atomic(using=using, savepoint=False):
+  File "C:\Python36\lib\site-packages\django\db\transaction.py", line 184, in __enter__
+    connection.set_autocommit(False, force_begin_transaction_with_broken_autocommit=True)
+  File "C:\Python36\lib\site-packages\django\db\backends\base\base.py", line 391, in set_autocommit
+    self._set_autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\utils.py", line 94, in __exit__
+    six.reraise(dj_exc_type, dj_exc_value, traceback)
+  File "C:\Python36\lib\site-packages\django\utils\six.py", line 685, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+django.db.utils.OperationalError: (2013, 'Lost connection to MySQL server during query')
+2017-12-15 19:46:14,611 ERROR (C:\Python36\lib\site-packages\django\core\handlers\exception.py, exception, handle_uncaught_exception, 132): Internal Server Error: /inception/execute/
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+pymysql.err.OperationalError: (2013, 'Lost connection to MySQL server during query')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 249, in _legacy_get_response
+    response = self._get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\pyworkspace\dbsupport\inception\views.py", line 371, in execute
+    workflowDetail.save()
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 796, in save
+    force_update=force_update, update_fields=update_fields)
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 821, in save_base
+    with transaction.atomic(using=using, savepoint=False):
+  File "C:\Python36\lib\site-packages\django\db\transaction.py", line 184, in __enter__
+    connection.set_autocommit(False, force_begin_transaction_with_broken_autocommit=True)
+  File "C:\Python36\lib\site-packages\django\db\backends\base\base.py", line 391, in set_autocommit
+    self._set_autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\utils.py", line 94, in __exit__
+    six.reraise(dj_exc_type, dj_exc_value, traceback)
+  File "C:\Python36\lib\site-packages\django\utils\six.py", line 685, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+django.db.utils.OperationalError: (2013, 'Lost connection to MySQL server during query')
+2017-12-15 21:53:34,562 ERROR (C:\Python36\lib\site-packages\django\core\handlers\exception.py, exception, handle_uncaught_exception, 132): Internal Server Error: /inception/execute/
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+pymysql.err.OperationalError: (2013, 'Lost connection to MySQL server during query')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 249, in _legacy_get_response
+    response = self._get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\pyworkspace\dbsupport\inception\views.py", line 371, in execute
+    workflowDetail.save()
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 796, in save
+    force_update=force_update, update_fields=update_fields)
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 821, in save_base
+    with transaction.atomic(using=using, savepoint=False):
+  File "C:\Python36\lib\site-packages\django\db\transaction.py", line 184, in __enter__
+    connection.set_autocommit(False, force_begin_transaction_with_broken_autocommit=True)
+  File "C:\Python36\lib\site-packages\django\db\backends\base\base.py", line 391, in set_autocommit
+    self._set_autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\utils.py", line 94, in __exit__
+    six.reraise(dj_exc_type, dj_exc_value, traceback)
+  File "C:\Python36\lib\site-packages\django\utils\six.py", line 685, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+django.db.utils.OperationalError: (2013, 'Lost connection to MySQL server during query')
+2017-12-15 22:16:51,077 ERROR (C:\Python36\lib\site-packages\django\core\handlers\exception.py, exception, handle_uncaught_exception, 132): Internal Server Error: /inception/execute/
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+pymysql.err.OperationalError: (2013, 'Lost connection to MySQL server during query')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 249, in _legacy_get_response
+    response = self._get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\pyworkspace\dbsupport\inception\views.py", line 371, in execute
+    workflowDetail.save()
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 796, in save
+    force_update=force_update, update_fields=update_fields)
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 821, in save_base
+    with transaction.atomic(using=using, savepoint=False):
+  File "C:\Python36\lib\site-packages\django\db\transaction.py", line 184, in __enter__
+    connection.set_autocommit(False, force_begin_transaction_with_broken_autocommit=True)
+  File "C:\Python36\lib\site-packages\django\db\backends\base\base.py", line 391, in set_autocommit
+    self._set_autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\utils.py", line 94, in __exit__
+    six.reraise(dj_exc_type, dj_exc_value, traceback)
+  File "C:\Python36\lib\site-packages\django\utils\six.py", line 685, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+django.db.utils.OperationalError: (2013, 'Lost connection to MySQL server during query')
+2017-12-15 22:23:51,845 ERROR (C:\Python36\lib\site-packages\django\core\handlers\exception.py, exception, handle_uncaught_exception, 132): Internal Server Error: /inception/execute/
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+pymysql.err.OperationalError: (2013, 'Lost connection to MySQL server during query')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 249, in _legacy_get_response
+    response = self._get_response(request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python36\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\pyworkspace\dbsupport\inception\views.py", line 374, in execute
+    (finalStatus, finalList) = inceptionDao.executeFinal(workflowDetail, dictConn)
+  File "D:\pyworkspace\dbsupport\inception\inception.py", line 166, in executeFinal
+    workflowDetail.save()
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 796, in save
+    force_update=force_update, update_fields=update_fields)
+  File "C:\Python36\lib\site-packages\django\db\models\base.py", line 821, in save_base
+    with transaction.atomic(using=using, savepoint=False):
+  File "C:\Python36\lib\site-packages\django\db\transaction.py", line 184, in __enter__
+    connection.set_autocommit(False, force_begin_transaction_with_broken_autocommit=True)
+  File "C:\Python36\lib\site-packages\django\db\backends\base\base.py", line 391, in set_autocommit
+    self._set_autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\django\db\utils.py", line 94, in __exit__
+    six.reraise(dj_exc_type, dj_exc_value, traceback)
+  File "C:\Python36\lib\site-packages\django\utils\six.py", line 685, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
+    self.connection.autocommit(autocommit)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 739, in autocommit
+    self._send_autocommit_mode()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 757, in _send_autocommit_mode
+    self._read_ok_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 746, in _read_ok_packet
+    pkt = self._read_packet()
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 961, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
+    2013, "Lost connection to MySQL server during query")
+django.db.utils.OperationalError: (2013, 'Lost connection to MySQL server during query')
