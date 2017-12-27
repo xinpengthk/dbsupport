@@ -11,11 +11,10 @@ leftMenusGeneral = {
             {'key':'allworkflow',
             'name':'工单管理',
             'url':'/inception/allworkflow/',
+            'sort':1,
+            'role':'super'              
             },
-            {'key':'charts',
-            'name':'工单统计',
-            'url':'/inception/charts/',
-            },
+
 #             {'key':'submitsql',
 #             'name':'发起SQL上线',
 #             'url':'/inception/submitsql/',
@@ -39,21 +38,27 @@ leftMenusSuper = {
             'name':'主库地址配置',
 #             'url':'/admin/inception/master_config/',
             'url':'/inception/masterConfigList/',
-            'sort':3,
+            'sort':1,
             'role':'super'
             },
             {'key':'workflowconfig',
             'name':'所有工单管理',
             'url':'/inception/getSqlWorkOrderList/',
-            'sort':5,
+            'sort':2,
             'role':'super'
             },
+            {'key':'charts',
+            'name':'工单统计',
+            'url':'/inception/charts/',
+            'sort':3,
+            'role':'super'            
+            },                      
         ],
     '用户管理':[
             {'key':'userconfig',
             'name':'用户权限配置',
             'url':'/user/getUserList/',
-            'sort':4,
+            'sort':1,
             'role':'super'
             },
         ], 
@@ -61,9 +66,21 @@ leftMenusSuper = {
             {'key':'hostconfig',
             'name':'主机管理',
             'url':'/cmdb/getHostList/',
-            'sort':4,
+            'sort':1,
             'role':'super'
             },
+#             {'key':'dbClusterconfig',
+#             'name':'数据库集群配置',
+#             'url':'/cmdb/getDbClusterList/',
+#             'sort':2,
+#             'role':'super'
+#             }, 
+            {'key':'dbGroupconfig',
+            'name':'数据库管理',
+            'url':'/cmdb/getDbGroupList/',
+            'sort':3,
+            'role':'super'
+            }, 
         ],     
                      
 }

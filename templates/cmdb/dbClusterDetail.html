@@ -1,0 +1,52 @@
+{% extends "base/iframeBase.html" %}
+
+{% block content %}
+<div class="wrapper wrapper-content animated fadeInRight">      
+	<div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+						<h4>分组信息：</h4>			
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">                       
+                            <div class="col-sm-3">
+ 								<a type="button" id="add-db-group" href="javascript:void(0);" onclick="addDbGroup({{dbClusterObj.id}})" class="btn btn-primary">添加分组</a>
+                            </div>                            
+                        </div>                    
+                        <table class="table table-striped table-bordered table-hover " id="editable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>组名</th>
+                                    <th>组状态</th>
+                                    <th>组说明</th>
+                                    <th>记录创建时间</th>
+                                    <th>记录最后更新时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+								{% for dbGroup in dbGroupList %}
+								<tr class="gradeX">
+									<td>{{dbGroup.id}}</td>
+									<td>{{dbGroup.groupName}}</td>
+									<td>{{dbGroup.groupStatus}}</td>
+									<td>{{dbGroup.groupDesc}}</td>
+	                                <td class="center">{{dbGroup.createdTime|date:"Y-m-d H:i:s"}}</td>
+	                                <td class="center">{{dbGroup.updatedTime|date:"Y-m-d H:i:s"}}</td>
+	                                <td>
+	                                    <a type="button" href="javascript:void(0);" onclick="changeDbGroupInfo({{dbClusterObj.id}}, {{dbGroup.id}}, '{{dbGroup.groupName}}', '{{dbGroup.groupStatus}}', '{{dbGroup.groupDesc}}')" class="change-db-group">修改</a>|
+										<a type="button" href="javascript:void(0);" onclick="delDbGroup({{dbGroup.id}})" class="del-db-group">删除</a>	                                
+	                                </td>
+								</tr>
+								{% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>		
+                </div>
+            </div>
+        </div>        
+</div>
+{% endblock content%}

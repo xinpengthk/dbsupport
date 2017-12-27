@@ -1,0 +1,71 @@
+{% extends "base/iframeBase.html" %}
+
+{% block content %}
+		<!--添加配置项弹出层 begin-->
+		<div id="addHost" class="row wrapper border-bottom white-bg page-heading">
+		    <div class="row">
+		        <div class="col-lg-12">
+		            <div class="ibox float-e-margins">          
+		                <div class="ibox-content">    
+		                	<form class="form-horizontal m-t" id="addDBGroupForm">
+		                		{% csrf_token %}
+		                		<input type="hidden" class="form-control" id="groupId" name="groupId" value="">          
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">业务线名称：</label>
+			                        <div class="col-sm-6">
+			                            <input type="text" class="form-control" id="businessName" name="businessName" placeholder="如：TSP">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入业务线名称！</span>
+			                        </div>
+			                    </div>
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">数据库组名称：</label>
+			                        <div class="col-sm-6">
+			                            <input type="text" class="form-control" id="groupName" name="groupName" placeholder="格式：集群名称-GROUP-序号，如：TSP-GROUP01">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入数据库组名称！</span>
+			                        </div>
+			                    </div>
+								<div class="form-group">
+								    <label class="col-sm-4 control-label">数据库组环境:</label>
+								    <div class="col-sm-6">
+								        <select class="form-control m-b" name="groupEnv" id="groupEnv">
+											<option value="PRD" selected="selected">PRD</option>
+											<option value="PRE_PRD">PRE_PRD</option>
+											<option value="QA">QA</option>
+											<option value="DEV">DEV</option>
+								        </select>
+								    </div>
+								</div>				                    	                    
+								<div class="form-group">
+								    <label class="col-sm-4 control-label">数据库组状态:</label>
+								    <div class="col-sm-6">
+								        <select class="form-control m-b" name="groupStatus" id="groupStatus">
+											<option value="正常运行" selected="selected">正常运行</option>
+											<option value="已下线">已下线</option>
+											<option value="上线中">上线中</option>
+											<option value="计划维护中">计划维护中</option>
+											<option value="故障维护中">故障维护中</option>
+								        </select>
+								    </div>
+								</div>			                    
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">数据库组说明:</label>
+			                        <div class="col-sm-6">
+			                            <textarea class="form-control" name="groupDesc" id="groupDesc"></textarea>
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入数据库组说明!</span> 
+			                        </div>
+			                    </div>			                    	                    		                    
+			                    <div class="hr-line-dashed"></div>
+			                    <div class="form-group">
+			                        <div class="col-sm-4 col-sm-offset-4">
+			                            <button class="btn btn-primary addDBGroup" type='submit'>保存提交</button>
+			                            <span class="help-block m-b-none red-bg" id="showmsg"></span>
+			                        </div>
+			                    </div>
+			            	</form>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+
+{% endblock content%}

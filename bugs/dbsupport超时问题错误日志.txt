@@ -5,6 +5,21 @@
 4. 执行ret=cur.execute(sql)该行语句之前进行锁标操作（变更的表，认为让执行时间加长），过5分钟左右在执行
 5. 此时就会报已下错误，图片为dbsupport超时问题.jpg
 
+## 临时解决方案：
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'dbsupport_db',
+        'USER': 'dbsupportwebuser',
+        'PASSWORD': 'dbsupport#2017',
+        'HOST': '10.3.2.86',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET wait_timeout=28800" ,
+        },
+    }
+}
+
 2017-12-15 19:46:14,603 ERROR (C:\Python36\lib\site-packages\django\core\handlers\exception.py, exception, handle_uncaught_exception, 132): Internal Server Error: /inception/execute/
 Traceback (most recent call last):
   File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
@@ -173,6 +188,7 @@ Traceback (most recent call last):
   File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
     2013, "Lost connection to MySQL server during query")
 django.db.utils.OperationalError: (2013, 'Lost connection to MySQL server during query')
+
 2017-12-15 22:16:51,077 ERROR (C:\Python36\lib\site-packages\django\core\handlers\exception.py, exception, handle_uncaught_exception, 132): Internal Server Error: /inception/execute/
 Traceback (most recent call last):
   File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit
@@ -229,6 +245,8 @@ Traceback (most recent call last):
   File "C:\Python36\lib\site-packages\pymysql\connections.py", line 998, in _read_bytes
     2013, "Lost connection to MySQL server during query")
 django.db.utils.OperationalError: (2013, 'Lost connection to MySQL server during query')
+
+
 2017-12-15 22:23:51,845 ERROR (C:\Python36\lib\site-packages\django\core\handlers\exception.py, exception, handle_uncaught_exception, 132): Internal Server Error: /inception/execute/
 Traceback (most recent call last):
   File "C:\Python36\lib\site-packages\django\db\backends\mysql\base.py", line 289, in _set_autocommit

@@ -68,40 +68,56 @@
                             	{% endfor %}
                             </tbody>
                         </table>
-						<div style="text-align:center;">
+                        <div class="row">
+                        <div class="col-sm-3"><span class="pagination">第{{pageNo|add:1}}页/共{{pageNum}}页</span></div>
+						<div class="col-sm-offset-3 col-sm-3">
 							<nav aria-label="Page navigation">
 							  <ul class="pagination">
+							  	{% if pageNo != 0 %}
 							    <li>
 							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'-1'}}&search_keyword={{search_keyword}}" aria-label="Previous">
 							    	<span aria-hidden="true">&laquo;</span>
 							    	</a>
 							    </li>
+							    {% endif %}
 							    <li class="active">
 							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'0'}}&search_keyword={{search_keyword}}">{{pageNo|add:"1"}}</a>
 							    </li>
 							    
-							    {% if listSqlOrderNum >= PAGE_LIMIT %}
+<!-- 							    {% if listSqlOrderNum >= PAGE_LIMIT %} -->
+								
+								{% if pageLeave >= 2 %}
 							    <li>
 							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'1'}}&search_keyword={{search_keyword}}">{{pageNo|add:"2"}}</a>
 							    </li>
+							    {% endif %}
+							    {% if pageLeave >= 3 %}
 							    <li>
 									<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'2'}}&search_keyword={{search_keyword}}">{{pageNo|add:"3"}}</a>
 								</li>
+								{% endif %}
+								{% if pageLeave >= 4 %}
 							    <li>
 							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'3'}}&search_keyword={{search_keyword}}">{{pageNo|add:"4"}}</a>
 							    </li>
+							    {% endif %}
+							    {% if pageLeave >= 5 %}
 							    <li>
 							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'4'}}&search_keyword={{search_keyword}}">{{pageNo|add:"5"}}</a>
 							    </li>
-					    
+					    		{% endif %}
+					    		{% if pageLeave != 1 %}
 							    <li>
 							    	<a href="/inception/getSqlWorkOrderList/?pageNo={{pageNo|add:'1'}}&search_keyword={{search_keyword}}" aria-label="Next">
 							    		<span aria-hidden="true">&raquo;</span>
 							    	</a>
 							    </li>
-							    {% endif %}									   
+							    {% endif %}	
+<!-- 							    {% endif %}							    -->
+								
 							  </ul>
-							</nav>						
+							</nav>
+						</div>
 						</div>
                     </div>		
                 </div>

@@ -1,0 +1,129 @@
+{% extends "base/iframeBase.html" %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+						<h4>集群列表（共{{listDbClusterNum}}条记录）：</h4>
+                        <div class="ibox-tools">
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+<!--                             <a type="button" id="add-work-order" href="javascript:void(0);" onclick="addWorkOrder()" class="btn btn-primary">新建工单</a> -->
+							<form id="dbClusterSearchForm" method="get" class="form-horizontal" role="form">
+							{% csrf_token %}
+	                            <div class="col-sm-3">
+		                        	<div class="input-group">
+		                            	{% if search_keyword == '' %}
+		                            	<input type="text" placeholder="请输入关键词(集群名|集群状态)" class="input-sm form-control" id="search_keyword" name="search_keyword" value="">
+		                            	{% else %}
+		                            	<input type="text" placeholder="请输入关键词(集群名|集群状态)" class="input-sm form-control" id="search_keyword" name="search_keyword" value="{{search_keyword}}">
+		                            	{% endif %}
+		                            	<span class="input-group-btn">
+		                                	<button type="submit" class="btn btn-sm btn-primary">搜索</button>
+		                            	</span>
+		                        	</div>
+	                            </div>
+                            </form>
+                            <div class="col-sm-1">
+ 								<a type="button" id="add-host" href="javascript:void(0);" onclick="addDBCluster()" class="btn btn-primary">添加集群</a>
+                            </div>                            
+                        </div>
+                        <table class="table table-striped table-bordered table-hover dataTables-example" id="editable">
+                            <thead>
+                                <tr>
+                                    <th>集群ID</th>
+                                    <th>集群名</th>
+                                    <th>集群状态</th>
+                                    <th>集群说明</th>
+                                    <th>记录创建时间</th>
+                                    <th>记录最后更新时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            	{% for dbCluster in listDbCluster %}
+	                                <tr class="gradeX">
+	                                    <td>{{dbCluster.id}}</td>
+	                                    <td>{{dbCluster.clusterName}}</td>
+	                                    <td>{{dbCluster.clusterStatus}}</td>
+	                                    <td>{{dbCluster.clusterDesc}}</td>
+	                                    <td class="center">{{dbCluster.createdTime|date:"Y-m-d H:i:s"}}</td>
+	                                    <td class="center">{{dbCluster.updatedTime|date:"Y-m-d H:i:s"}}</td>
+	                                    <td>
+<!-- 	                                    	<a type="button" href="javascript:void(0);" onclick="addHostUser({{host.id}})" class="add-host-user">添加用户</a>| -->
+	                                    	<a type="button" href="javascript:void(0);" onclick="changeDBClusterInfo({{dbCluster.id}})" class="change-db-cluster">修改</a>
+<!-- 											<a type="button" href="javascript:void(0);" onclick="delDBCluster({{dbCluster.id}})" class="del-db-cluster">删除</a> -->
+										</td>
+	                                </tr>                            	
+                            	{% empty %}
+									<tr>
+										<td>暂无工单，嘿嘿嘿.</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+                            	{% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="row">
+                        <div class="col-sm-3"><span class="pagination">第{{pageNo|add:1}}页/共{{pageNum}}页</span></div>
+						<div class="col-sm-offset-3 col-sm-3">
+							<nav aria-label="Page navigation">
+							  <ul class="pagination">
+								{% if pageNo != 0 %}							  
+							    <li>
+							    	<a href="/cmdb/getdbClusterList/?pageNo={{pageNo|add:'-1'}}&search_keyword={{search_keyword}}" aria-label="Previous">
+							    	<span aria-hidden="true">&laquo;</span>
+							    	</a>
+							    </li>
+							    {% endif %}
+							    
+							    <li class="active">
+							    	<a href="/cmdb/getdbClusterList/?pageNo={{pageNo|add:'0'}}&search_keyword={{search_keyword}}">{{pageNo|add:"1"}}</a>
+							    </li>
+							    
+							    {% if pageLeave >= 2 %}
+							    <li>
+							    	<a href="/cmdb/getdbClusterList/?pageNo={{pageNo|add:'1'}}&search_keyword={{search_keyword}}">{{pageNo|add:"2"}}</a>
+							    </li>
+							    {% endif %}
+							     {% if pageLeave >= 3 %}
+							    <li>
+									<a href="/cmdb/getdbClusterList/?pageNo={{pageNo|add:'2'}}&search_keyword={{search_keyword}}">{{pageNo|add:"3"}}</a>
+								</li>
+								{% endif %}
+								 {% if pageLeave >= 4 %}
+							    <li>
+							    	<a href="/cmdb/getdbClusterList/?pageNo={{pageNo|add:'3'}}&search_keyword={{search_keyword}}">{{pageNo|add:"4"}}</a>
+							    </li>
+							    {% endif %}
+							    {% if pageLeave >= 5 %}
+							    <li>
+							    	<a href="/cmdb/getdbClusterList/?pageNo={{pageNo|add:'4'}}&search_keyword={{search_keyword}}">{{pageNo|add:"5"}}</a>
+							    </li>
+							    {% endif %}
+					    
+					    		{% if pageLeave != 1 %}
+							    <li>
+							    	<a href="/cmdb/getdbClusterList/?pageNo={{pageNo|add:'1'}}&search_keyword={{search_keyword}}" aria-label="Next">
+							    		<span aria-hidden="true">&raquo;</span>
+							    	</a>
+							    </li>
+							    {% endif %}									   
+							  </ul>
+							</nav>						
+						</div>
+						</div>
+                    </div>		
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content%}

@@ -1,0 +1,102 @@
+{% extends "base/iframeBase.html" %}
+
+{% block content %}
+		<!--添加配置项弹出层 begin-->
+		<div id="addHost" class="row wrapper border-bottom white-bg page-heading">
+		    <div class="row">
+		        <div class="col-lg-12">
+		            <div class="ibox float-e-margins">          
+		                <div class="ibox-content">    
+		                	<form class="form-horizontal m-t" id="addDBInstanceForm">
+		                		{% csrf_token %}
+		                		<input type="hidden" class="form-control" id="instanceId" name="instanceId" value="">     
+								<div class="form-group">
+								    <label class="col-sm-4 control-label">主机选择:</label>
+								    <div class="col-sm-6">
+								        <select class="form-control m-b" name="hostId" id="hostId">
+								        	<option id="hostIdDefault1" selected="selected">--请选择主机--</option>
+								        	{% for host in listHost %}
+											<option value="{{host.id}}">{{host.hostName}}-{{host.intranetIpAddr}}</option>
+											{% empty %}
+											<option id="hostIdDefault2" selected="selected">--请先配置该业务线下的主机--</option>
+											{% endfor %}
+								        </select>
+								    </div>
+								</div>			                		     
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">数据库组名称：</label>
+			                        <div class="col-sm-6">
+			                            <input type="hidden"  class="form-control" id="groupId" name="groupId" value="{{dbGroupObj.id}}">
+			                            <input type="text"  class="form-control" id="groupNameDisplay" name="groupNameDisplay" readonly="readonly" value="{{dbGroupObj.groupName}}">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> </span>
+			                        </div>
+			                    </div>
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">实例名称：</label>
+			                        <div class="col-sm-6">
+			                            <input type="text" class="form-control" id="instanceName" name="instanceName" placeholder="格式：业务线名称-数据库组名称-INST-序号，如：TSP-GROUP01-INST01">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入实例名称！</span>
+			                        </div>
+			                    </div>
+								<div class="form-group">
+								    <label class="col-sm-4 control-label">实例类型:</label>
+								    <div class="col-sm-6">
+								        <select class="form-control m-b" name="instanceType" id="instanceType">
+											<option value="MYSQL" selected="selected">MYSQL</option>
+											<option value="REDIS">REDIS</option>
+											<option value="ORACLE">ORACLE</option>
+											<option value="MONGO">MONGO</option>
+								        </select>
+								    </div>
+								</div>		
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">实例端口号：</label>
+			                        <div class="col-sm-6">
+			                            <input type="text" class="form-control" id="portNum" name="portNum">
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入实例端口号！</span>
+			                        </div>
+			                    </div>								                    	                    
+								<div class="form-group">
+								    <label class="col-sm-4 control-label">实例角色:</label>
+								    <div class="col-sm-6">
+								        <select class="form-control m-b" name="instanceRole" id="instanceRole">
+											<option value="MASTER" selected="selected">MASTER</option>
+											<option value="SINGLE">SINGLE</option>
+											<option value="SLAVE">SLAVE</option>
+								        </select>
+								    </div>
+								</div>	
+								<div class="form-group">
+								    <label class="col-sm-4 control-label">实例状态:</label>
+								    <div class="col-sm-6">
+								        <select class="form-control m-b" name="instanceStatus" id="instanceStatus">
+											<option value="正常运行" selected="selected">正常运行</option>
+											<option value="已下线">已下线</option>
+											<option value="上线中">上线中</option>
+											<option value="计划维护中">计划维护中</option>
+											<option value="故障维护中">故障维护中</option>
+								        </select>
+								    </div>
+								</div>			 							      
+			                    <div class="form-group">
+			                        <label class="col-sm-4 control-label">实例说明:</label>
+			                        <div class="col-sm-6">
+			                            <textarea class="form-control" name="instanceDesc" id="instanceDesc"></textarea>
+			                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请输入实例说明!</span> 
+			                        </div>
+			                    </div>			                    	                    		                    
+			                    <div class="hr-line-dashed"></div>
+			                    <div class="form-group">
+			                        <div class="col-sm-4 col-sm-offset-4">
+			                            <button class="btn btn-primary addDBInstance" type='submit'>保存提交</button>
+			                            <span class="help-block m-b-none red-bg" id="showmsg"></span>
+			                        </div>
+			                    </div>
+			            	</form>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+
+{% endblock content%}

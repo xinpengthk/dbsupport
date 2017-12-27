@@ -125,7 +125,10 @@ DATABASES = {
         'USER': 'dbsupportwebuser',
         'PASSWORD': 'dbsupport#2017',
         'HOST': '10.3.2.86',
-        'PORT': '3306'
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET wait_timeout=28800" ,
+        },
     }
 }
 

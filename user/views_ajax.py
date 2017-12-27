@@ -182,6 +182,22 @@ def delUser(request):
             result = {'status':2, 'msg':'删除失败!'+str(e), 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
         
+@csrf_exempt
+def getUserDetailInfo(request):
+    userId = request.POST['userId']
+    
+    try:
+        userObj = users.objects.get(id=userId)
+        userJson = userObj.toJSON()
+        
+        result = {'status':1, 'msg':'请求成功', 'obj':userJson}
+        print(result)
+        return HttpResponse(json.dumps(result), content_type='application/json')
+    except Exception as e:
+        print(e)
+        result = {'status':2, 'msg':'请求失败!'+str(e), 'data':''}
+        return HttpResponse(json.dumps(result), content_type='application/json')
+
 @csrf_exempt    
 def resetUserPasswd(request):
     v_userId = request.POST['userId']

@@ -208,7 +208,7 @@ def addMasterConfig(request):
             result = {'status':2, 'msg':'修改失败!'+str(e), 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')        
 
-
+@csrf_exempt
 def delMasterConfig(request):
     clusterId = request.POST['masterConfigId']
     
@@ -244,4 +244,19 @@ def delsqlOrder(request):
             result = {'status':2, 'msg':'删除失败!'+str(e), 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
 
-
+@csrf_exempt
+def getMasterConfigDetailInfo(request):
+    configId = request.POST['configId']
+    
+    try:
+        masterConfigObj = master_config.objects.get(id=configId)
+        masterConfigJson = masterConfigObj.toJSON()
+        
+        result = {'status':1, 'msg':'请求成功', 'obj':masterConfigJson}
+        print(result)
+        return HttpResponse(json.dumps(result), content_type='application/json')
+    except Exception as e:
+        print(e)
+        result = {'status':2, 'msg':'请求失败!'+str(e), 'data':''}
+        return HttpResponse(json.dumps(result), content_type='application/json')
+            

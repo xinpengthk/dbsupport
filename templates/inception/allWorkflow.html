@@ -27,8 +27,8 @@
 	                                </div>
                                 </form>
                             </div>                      
-                        	<div class="col-sm-offset-8 col-sm-1">
-                        		<a type="button" id="add-work-order" href="javascript:void(0);" onclick="addWorkOrder()" class="btn btn-primary" style="width:100%;">新建工单</a>
+                        	<div class="col-sm-1">
+                        		<a type="button" id="add-work-order" href="javascript:void(0);" onclick="addWorkOrder()" class="btn btn-primary">新建工单</a>
                         	</div>
                         </div>
                         <table class="table table-striped table-bordered table-hover dataTables-example" id="editable">
@@ -86,7 +86,7 @@
 							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"0"}}&search_keyword={{search_keyword}}">{{pageNo|add:"1"}}</a>
 							    </li>
 							    
-							    {% if listWorkflow|length >= PAGE_LIMIT %}
+							    {% if listWorkflowNum >= PAGE_LIMIT %}
 							    <li>
 							    	<a href="/inception/allworkflow/?pageNo={{pageNo|add:"1"}}&search_keyword={{search_keyword}}">{{pageNo|add:"2"}}</a>
 							    </li>

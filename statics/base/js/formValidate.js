@@ -589,3 +589,195 @@ $().ready(function() {
 		invalidHandler: function(form, validator) {return false;}
 	}); 
 });
+
+
+//添加集群
+$().ready(function() {
+	$("#addDBClusterForm").validate({
+		onsubmit:true,// 是否在提交时验证
+		onfocusout:false,// 是否在获取焦点时验证
+		onkeyup :false,// 是否在敲击键盘时验证
+		rules: {
+			clusterName: {
+		        required: true,
+		        maxlength: 128,
+		    },
+		    clusterDesc: {
+		        required: true,
+		    }, 
+		},
+		submitHandler: function(form) { // 通过之后回调
+			var v_clusterId = $('#clusterId').val();
+			var v_clusterName = $('#clusterName').val();
+			var v_clusterStatus = $('#clusterStatus').val();
+			var v_clusterDesc = $('#clusterDesc').val();
+			
+			url = '/cmdb/addChangeDbClusterInfo/'
+		    
+		    $.ajax({
+		        type: "POST",
+		        url: url,
+		        data: {
+		        	cluster_id : v_clusterId,
+		        	cluster_name : v_clusterName,
+		        	cluster_status : v_clusterStatus,
+		        	cluster_desc : v_clusterDesc,
+		        },
+		        success: function (data) {
+		            if (data.status == '1') {
+		            	layer.msg(data.msg, 
+		            			 {icon:1},
+		            			 function(){
+		            				 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		            				 parent.layer.close(index); //再执行关闭  
+		            			   }
+		            			 );
+		            } else {
+		                layer.msg(data.msg + data.data, {icon: 2});
+		            }
+		        }
+		    });
+		},
+		invalidHandler: function(form, validator) {return false;}
+	}); 
+});
+
+
+//添加数据库组
+$().ready(function() {
+	$("#addDBGroupForm").validate({
+		onsubmit:true,// 是否在提交时验证
+		onfocusout:false,// 是否在获取焦点时验证
+		onkeyup :false,// 是否在敲击键盘时验证
+		rules: {
+			businessName: {
+		        required: true,
+		        maxlength: 128,
+		    },
+			groupName: {
+		        required: true,
+		        maxlength: 128,
+		    },		    
+		    groupDesc: {
+		        required: true,
+		    }, 
+		},
+		submitHandler: function(form) { // 通过之后回调
+			var v_groupId = $('#groupId').val();
+			var v_businessName = $('#businessName').val();
+			var v_groupName = $('#groupName').val();
+			var v_groupEnv = $('#groupEnv').val();
+			var v_groupStatus = $('#groupStatus').val();
+			var v_groupDesc = $('#groupDesc').val();
+			
+			url = '/cmdb/addChangeDbGroupInfo/'
+		    
+		    $.ajax({
+		        type: "POST",
+		        url: url,
+		        data: {
+		        	group_id: v_groupId,
+		        	business_name : v_businessName,
+		        	group_name : v_groupName,
+		        	group_env : v_groupEnv,
+		        	group_status : v_groupStatus,
+		        	group_desc : v_groupDesc,
+		        },
+		        success: function (data) {
+		            if (data.status == '1') {
+		            	layer.msg(data.msg, 
+		            			 {icon:1, time: 2000},
+		            			 function(){
+		            				 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		            				 parent.layer.close(index); //再执行关闭  
+		            			   }
+		            			 );
+		            } else {
+		                layer.msg(data.msg + data.data, {icon: 2});
+		            }
+		        }
+		    });
+		},
+		invalidHandler: function(form, validator) {return false;}
+	}); 
+});
+
+//添加数据库实例
+$().ready(function() {
+	$("#addDBInstanceForm").validate({
+		onsubmit:true,// 是否在提交时验证
+		onfocusout:false,// 是否在获取焦点时验证
+		onkeyup :false,// 是否在敲击键盘时验证
+		rules: {
+			hostId: {
+		        required: true,
+		        digits: true,
+		    },
+		    instanceName: {
+		        required: true,
+		        maxlength: 128,
+		    },		    
+		    instanceType: {
+		        required: true,
+		    }, 
+		    portNum: {
+		        required: true,
+		        digits: true,
+		    }, 		
+		    instanceRole: {
+		        required: true,
+		    }, 		
+		    instanceDesc: {
+		        required: true,
+		    }, 		    
+		},
+		messages: {
+		      hostId: {
+		    	  digits: "请选择主机，如该业务线没有机器，请先添加机器！",
+		      },
+		},
+		submitHandler: function(form) { // 通过之后回调
+			var v_instanceId = $('#instanceId').val();
+			var v_groupId = $('#groupId').val();
+			var v_hostId = $('#hostId').val();
+			var v_instanceName = $('#instanceName').val();
+			var v_instanceType = $('#instanceType').val();
+			var v_portNum = $('#portNum').val();
+			var v_instanceRole = $('#instanceRole').val();
+			var v_instanceStatus = $('#instanceStatus').val();
+			var v_instanceDesc = $('#instanceDesc').val();
+			
+			url = '/cmdb/addChangeDbInstanceInfo/'
+		    
+		    $.ajax({
+		        type: "POST",
+		        url: url,
+		        data: {
+		        	instance_id: v_instanceId,
+		        	group_id: v_groupId,
+		        	host_id : v_hostId,
+		        	instance_env : v_instanceName,
+		        	instance_type : v_instanceType,
+		        	port_num : v_portNum,
+		        	instance_role : v_instanceRole,
+		        	instance_status: v_instanceStatus,
+		        	instance_desc : v_instanceDesc,
+		        },
+		        success: function (data) {
+		            if (data.status == '1') {
+		            	layer.msg(data.msg, 
+		            			 {icon:1, time: 2000},
+		            			 function(){
+		            				 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		            				 parent.layer.close(index); //再执行关闭  
+		            			   }
+		            			 );
+		            } else {
+		                layer.msg(data.msg + data.data, {icon: 2});
+		            }
+		        }
+		    });
+		},
+		invalidHandler: function(form, validator) {return false;}
+	}); 
+});

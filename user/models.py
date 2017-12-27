@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*- 
+import json
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+from utils.jsonExt import DateEncoder
 
 
 # Create your models here.
@@ -13,6 +17,17 @@ class users(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)
 
     class Meta:
         db_table = 'users'

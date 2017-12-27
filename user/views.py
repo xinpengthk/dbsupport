@@ -83,6 +83,7 @@ def getUserList(request):
             listUser = users.objects.all().order_by('-date_joined')[offset:limit]
             listUserNum = users.objects.count()
             pageNum = math.ceil(listUserNum/PAGE_LIMIT)
+            pageLeave = pageNum-pageNo
         except Exception as e:
             print(e)
             context = {'errMsg': '内部错误！'}
@@ -92,14 +93,15 @@ def getUserList(request):
             print("search_keyword is Not None:")
             listUser = users.objects.filter(Q(display__contains=search_keyword)|Q(role__contains=search_keyword)).order_by('-date_joined')[offset:limit]
             listUserNum = users.objects.filter(Q(display__contains=search_keyword)|Q(role__contains=search_keyword)).count()
-            pageNum = math.ceil(listUserNum/PAGE_LIMIT)     
+            pageNum = math.ceil(listUserNum/PAGE_LIMIT) 
+            pageLeave = pageNum-pageNo    
         except Exception as e:
             print(e)
             context = {'errMsg': '内部错误！'}
             return render(request, 'error/error.html', context)
 
     
-    context = {'listUser':listUser, 'listUserNum':listUserNum, 'pageNo':pageNo, 'pageNum':pageNum, 'PAGE_LIMIT':PAGE_LIMIT, "search_keyword":search_keyword}
+    context = {'listUser':listUser, 'listUserNum':listUserNum, 'pageNo':pageNo, 'pageNum':pageNum, 'pageLeave':pageLeave, 'PAGE_LIMIT':PAGE_LIMIT, "search_keyword":search_keyword}
     
     return render(request, 'user/getUserList.html', context)
 

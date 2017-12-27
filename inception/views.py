@@ -2,10 +2,12 @@
 
 from collections import OrderedDict
 import json
+import math
 import re
 import time
 
 from django.conf import settings
+from django.db import connection
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -569,38 +571,6 @@ def addMasterConfigForm(request):
 
 # 查询工单（admin用户）（搜索问题）
 def getSqlWorkOrderList(request):
-# 
-#     search_keyword = request.GET.get('search_keyword')
-# 
-#     if search_keyword is None:
-#         search_keyword = ''
-#     
-#     search_keyword = search_keyword.strip()
-# 
-#     print("search_keyword:",search_keyword)
-# 
-#     PAGE_LIMIT = 15
-# 
-#     #参数检查
-#     if 'pageNo' in request.GET:
-#         pageNo = request.GET['pageNo']
-#     else:
-#         pageNo = '0'
-#         
-#     if not isinstance(pageNo, str):
-#         raise TypeError('pageNo页面传入参数不对')
-#     else:
-#         try:
-#             pageNo = int(pageNo)
-#             if pageNo < 0:
-#                 pageNo = 0
-#         except ValueError as ve:
-#             print(ve)
-#             context = {'errMsg': 'pageNo参数不是int.'}
-#             return render(request, 'error/error.html', context)
-# 
-#     offset = pageNo * PAGE_LIMIT
-#     limit = offset + PAGE_LIMIT
 
     paginationList = getPageLimitOffset(request)
     search_keyword = paginationList.get('search_keyword')
@@ -618,7 +588,9 @@ def getSqlWorkOrderList(request):
         try:
             print("search_keyword is None:")
             listSqlOrder = sql_order.objects.all().order_by('-create_time')[offset:limit]
-            listSqlOrderNum = sql_order.objects.count()        
+            listSqlOrderNum = sql_order.objects.count()
+            pageNum = math.ceil(listSqlOrderNum/PAGE_LIMIT)
+            pageLeave = pageNum-pageNo
         except Exception as e:
             print(e)
             context = {'errMsg': '内部错误！'}
@@ -627,14 +599,18 @@ def getSqlWorkOrderList(request):
         try:
             print("search_keyword is Not None:")
             listSqlOrder = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).order_by('-create_time')[offset:limit]
-            listSqlOrderNum = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).count()       
+            listSqlOrderNum = sql_order.objects.filter(Q(workflow_name__contains=search_keyword)|Q(sql_content__contains=search_keyword)).count()
+            pageNum = math.ceil(listSqlOrderNum/PAGE_LIMIT)
+            pageLeave = pageNum-pageNo  
         except Exception as e:
             print(e)
             context = {'errMsg': '内部错误！'}
             return render(request, 'error/error.html', context)
+        
+    
 
     
-    context = {'listSqlOrder':listSqlOrder, 'listSqlOrderNum':listSqlOrderNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT, "search_keyword":search_keyword}
+    context = {'listSqlOrder':listSqlOrder, 'listSqlOrderNum':listSqlOrderNum, 'pageNo':pageNo, 'pageNum':pageNum, 'pageLeave':pageLeave, 'PAGE_LIMIT':PAGE_LIMIT, "search_keyword":search_keyword}
     
     return render(request, 'inception/sqlWorkOrderlist.html', context)
     

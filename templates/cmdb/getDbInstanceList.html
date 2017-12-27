@@ -1,0 +1,82 @@
+{% extends "base/iframeBase.html" %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+						<h5>[{{dbGroupObj.groupName}}]-数据库组的实例列表（共{{listInstanceNum}}条记录）：</h5>
+                        <div class="ibox-tools">
+                        	<a type="button" id="add-host" href="javascript:void(0);" onclick="addDBInstance({{dbGroupObj.id}})" class="btn btn-primary btn-xs">添加实例</a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+<!--                             <a type="button" id="add-work-order" href="javascript:void(0);" onclick="addWorkOrder()" class="btn btn-primary">新建工单</a> -->
+<!--                             <div class="col-sm-1"> -->
+<!--  								<a type="button" id="add-host" href="javascript:void(0);" onclick="addDBInstance({{dbGroupObj.id}})" class="btn btn-primary">添加实例</a> -->
+<!--                             </div>                             -->
+                        </div>
+                        <table class="table table-striped table-bordered table-hover dataTables-example" id="editable">
+                            <thead>
+                                <tr>
+                                    <th>实例ID</th>
+                                    <th>主机</th>
+                                    <th>组名</th>
+                                    <th>实例名</th>
+                                    <th>实例角色</th>
+                                    <th>实例状态</th>                                    
+                                    <th>实例类型</th>
+                                    <th>实例端口号</th>
+                                    <th>实例说明</th>
+                                    <th>记录创建时间</th>
+                                    <th>记录最后更新时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            	{% for dbInstance in dbInstanceList %}
+	                                <tr class="gradeX">
+	                                    <td>{{dbInstance.id}}</td>
+	                                    <td>{{dbInstance.host}}</td>
+	                                    <td>{{dbInstance.groupName}}</td>
+	                                    <td class="center">{{dbInstance.instanceName}}</td>
+	                                    <td>{{dbInstance.instanceRole}}</td>
+	                                    <td>{{dbInstance.instanceStatus}}</td>	                                    
+	                                    <td>{{dbInstance.instanceType}}</td>
+	                                    <td>{{dbInstance.portNum}}</td>
+	                                    <td>{{dbInstance.instanceDesc}}</td>
+	                                    <td class="center">{{dbInstance.createdTime|date:"Y-m-d H:i:s"}}</td>
+	                                    <td class="center">{{dbInstance.updatedTime|date:"Y-m-d H:i:s"}}</td>
+	                                    <td>
+<!-- 	                                    	<a type="button" href="javascript:void(0);" onclick="addHostUser({{host.id}})" class="add-host-user">添加用户</a>| -->
+	                                    	<span><a type="button" href="javascript:void(0);" onclick="changeDbInstanceInfo({{dbInstance.id}})" class="change-db-instance">修改|</a></span>
+	                                    	<span><a type="button" href="javascript:void(0);" onclick="delDbInstance({{dbInstance.id}})" class="del-db-instance">删除</a></span>
+										</td>
+	                                </tr>                            	
+                            	{% empty %}
+									<tr>
+										<td>暂无工单，嘿嘿嘿.</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+                            	{% endfor %}
+                            </tbody>
+                        </table>
+                        
+                    </div>		
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content%}

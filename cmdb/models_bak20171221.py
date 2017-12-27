@@ -123,11 +123,7 @@ class host(models.Model):
     )
 
     def __str__(self):
-        return '【%s-%s】' %(self.hostName, self.intranetIpAddr)
-    
-    def natural_key(self):
-        return (self.id, self.hostName, self.intranetIpAddr)
-    
+        return '【%s-%s-%s-%s-%s-%s】' %(self.serviceEnv, self.businessName, self.hostName, self.intranetIpAddr, self.hostType, self.hostRole)
     
     def toJSON(self):
         fields = []
@@ -197,11 +193,6 @@ class hostUser(models.Model):
     
     def __str__(self):
         return self.hostUser
-    
-    def natural_key(self):
-        return self.host.natural_key()
-    
-    natural_key.dependencies = ['host']    
 
     def toJSON(self):
         fields = []
@@ -219,7 +210,71 @@ class hostUser(models.Model):
         verbose_name = u'服务器用户密码'
         verbose_name_plural = u'服务器用户密码'
 
+class dbCluster(models.Model):
+    CLUSTER_STATUS_CHOICES = (
+        ('正常运行', '正常运行'),
+        ('已下线', '已下线'),
+        ('上线中', '上线中'),
+        ('计划维护中', '计划维护中'),
+        ('故障维护中', '故障维护中'),
+    )
 
+    clusterName = models.CharField(db_column='cluster_name',
+        max_length=128,
+        null=False,
+        blank=False,
+        verbose_name='集群名',
+        help_text='请输入集群名!'
+    )
+        
+    clusterStatus = models.CharField(db_column='cluster_status',
+        max_length=32,
+        choices=CLUSTER_STATUS_CHOICES,
+        verbose_name='集群状态',
+        help_text='请选择集群状态!'
+    )
+    
+    clusterDesc = models.TextField(db_column='cluster_dsec',
+        null=False,
+        blank=False,
+        verbose_name='集群说明',
+        help_text='请输入集群说明!'
+    )
+
+    createdTime = models.DateTimeField(db_column='created_time', 
+        blank=True,
+        null=True,
+        auto_now_add=True,
+        verbose_name='记录创建时间',
+        help_text='该记录创建时间!',
+    )
+    
+    updatedTime = models.DateTimeField(db_column='updated_time', 
+        blank=True,
+        null=True,
+        auto_now=True,
+        verbose_name='记录最后更新时间',
+        help_text='记录最后更新时间!',
+    )
+    
+    def __str__(self):
+        return '【%s】' %(self.clusterName)
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)    
+
+    class Meta:
+        db_table = 'cmdb_db_cluster' 
+        verbose_name = u'数据库集群'
+        verbose_name_plural = u'数据库集群'
         
 class dbGroup(models.Model):
     GROUP_STATUS_CHOICES = (
@@ -229,37 +284,22 @@ class dbGroup(models.Model):
         ('计划维护中', '计划维护中'),
         ('故障维护中', '故障维护中'),        
     )
-    
-    GROUP_ENV_CHOICES = (
-        ('QA', 'QA'),
-        ('DEV', 'DEV'),
-        ('PRD', 'PRD'),
-        ('PRE_PRD', 'PRE_PRD'),
+
+    dbCluster = models.ForeignKey(
+        dbCluster,
+        on_delete=models.DO_NOTHING,
+        db_column='db_cluster',
+        db_index=False,
+        verbose_name='集群名',
+        help_text='请选择集群名',
     )
 
-    businessName = models.CharField(db_column='business_name',
-         max_length=32,
-         null=False,
-         blank=False,
-         default='',
-         verbose_name='业务线名称',
-         help_text='请输入业务线名称!'
-    )
-    
     groupName = models.CharField(db_column='group_name',
         max_length=128,
         null=False,
         blank=False,
         verbose_name='组名',
         help_text='请输入组名!'
-    )
-
-    groupEnv = models.CharField(db_column='group_env',
-        max_length=32,
-        choices=GROUP_ENV_CHOICES,
-        default='PRD',
-        verbose_name='数据库组环境',
-        help_text='请输入数据库组环境!'
     )
         
     groupStatus = models.CharField(db_column='group_status',
@@ -284,7 +324,6 @@ class dbGroup(models.Model):
         help_text='该记录创建时间!',
     )
     
-    # 时间字段有问题，不会自动更新
     updatedTime = models.DateTimeField(db_column='updated_time', 
         blank=True,
         null=True,
@@ -294,10 +333,7 @@ class dbGroup(models.Model):
     )
     
     def __str__(self):
-        return '【%s】' %(self.groupName)
-    
-    def natural_key(self):
-        return (self.id, self.groupName)
+        return '【%s-%s】' %(self.dbCluster, self.groupName)
     
     def toJSON(self):
         fields = []
@@ -327,14 +363,6 @@ class dbInstance(models.Model):
         ('REDIS', 'REDIS'),
         ('ORACLE', 'ORACLE'),
         ('MONGO', 'MONGO'),
-    )
-
-    INSTANCE_STATUS_CHOICES = (
-        ('正常运行', '正常运行'),
-        ('已下线', '已下线'),
-        ('上线中', '上线中'),
-        ('计划维护中', '计划维护中'),
-        ('故障维护中', '故障维护中'),        
     )
 
     host = models.ForeignKey(
@@ -387,14 +415,6 @@ class dbInstance(models.Model):
         help_text='请输入实例角色!'        
     )
     
-    instanceStatus = models.CharField(db_column='instance_status',
-        max_length=32,
-        choices=INSTANCE_STATUS_CHOICES,
-        default='正常运行',
-        verbose_name='实例状态',
-        help_text='请选择实例状态!'
-    )
-    
     instanceDesc = models.TextField(db_column='instance_dsec',
         null=False,
         blank=False,
@@ -420,11 +440,6 @@ class dbInstance(models.Model):
     
     def __str__(self):
         return '【%s-%s-%s-%s】' %(self.host, self.instanceType, self.instanceName, self.instanceRole)
-    
-    def natural_key(self):
-        return self.groupName.natural_key() + self.host.natural_key()
-    
-    natural_key.dependencies = ['dbGroup', 'host']
     
     def toJSON(self):
         fields = []
@@ -460,6 +475,7 @@ class dbDatabase(models.Model):
         db_index=False,
         verbose_name='组名',
         help_text='请选择组！',
+        
     )   
 
     dbName = models.CharField(db_column='db_name',

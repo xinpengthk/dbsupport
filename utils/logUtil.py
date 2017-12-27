@@ -15,6 +15,7 @@ import yaml
 
 def getLogger():
     logConfigFile = r"dbsupport/dbsupport/logConfig.yaml"
+#     logConfigFile = "dbsupport/logConfig.yaml"
     print(logConfigFile)
     print(os.path.abspath(logConfigFile))
     logging.config.dictConfig(yaml.load(open(logConfigFile, 'r')))

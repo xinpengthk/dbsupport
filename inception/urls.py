@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^addMasterConfigForm/$', views.addMasterConfigForm, name='addMasterConfigForm'),
     url(r'^addMasterConfig/$', views_ajax.addMasterConfig, name='addMasterConfig'),
     url(r'^delMasterConfig/$', views_ajax.delMasterConfig, name='delMasterConfig'),
+    url(r'^getMasterConfigDetailInfo/$', views_ajax.getMasterConfigDetailInfo, name='getMasterConfigDetailInfo'), 
     url(r'^getSqlWorkOrderList/$', views.getSqlWorkOrderList, name='getSqlWorkOrderList'),
     url(r'^delsqlOrder/$', views_ajax.delsqlOrder, name='delsqlOrder'),
     url(r'^getSqlWorkOrderDetail/(?P<sqlOrderId>[0-9]+)/$', views.getSqlWorkOrderDetail, name='getSqlWorkOrderDetail'),

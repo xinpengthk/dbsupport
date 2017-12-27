@@ -1,7 +1,10 @@
 # -*- coding: UTF-8 -*- 
+import json
+
 from django.db import models
 
 from utils import AesCharField
+from utils.jsonExt import DateEncoder
 
 
 #各个线上主库地址。
@@ -16,6 +19,18 @@ class master_config(models.Model):
 
     def __str__(self):
         return self.cluster_name
+    
+    def toJSON(self):
+        fields = []
+        for field in self._meta.fields:
+            fields.append(field.name)
+    
+        d = {}
+        for attr in fields:
+            d[attr] = getattr(self, attr)
+    
+        return json.dumps(d, cls=DateEncoder)
+    
     class Meta:
         verbose_name = u'主库地址'
         verbose_name_plural = u'主库地址'

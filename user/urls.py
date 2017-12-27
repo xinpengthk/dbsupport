@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^addUserForm/$', views.addUser, name='addUserForm'),
     url(r'^addChangeUserInfo/$', views_ajax.addChangeUserInfo, name='addChangeUserInfo'),
     url(r'^delUser/$', views_ajax.delUser, name='delUser'),
+    url(r'^getUserDetailInfo/$', views_ajax.getUserDetailInfo, name='getUserDetailInfo'),
     url(r'^resetUserPasswd/$', views_ajax.resetUserPasswd, name='resetUserPasswd'),
 
 ]
