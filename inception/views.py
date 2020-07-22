@@ -15,7 +15,7 @@ from django.shortcuts import render, get_object_or_404
 from inception.const import Const
 from inception.dao import Dao
 from inception.inception import InceptionDao
-from inception.models import sql_order, master_config
+from inception.models import sql_order, main_config
 from user.models import users
 from utils.pagination import getPageLimitOffset
 from utils.sendmail import MailSender
@@ -26,7 +26,7 @@ from utils.sendmail import MailSender
 # from .const import Const
 # from .dao import Dao
 # from .inception import InceptionDao
-# from .models import users, master_config, workflow
+# from .models import users, main_config, workflow
 # from .sendmail import MailSender
 dao = Dao()
 inceptionDao = InceptionDao()
@@ -199,29 +199,29 @@ def getWorkOrderList(request):
 
 #提交SQL的页面
 def submitSql(request):
-    masters = master_config.objects.all().order_by('cluster_name')
-    if len(masters) == 0:
+    mains = main_config.objects.all().order_by('cluster_name')
+    if len(mains) == 0:
         context = {'errMsg': '集群数为0，可能后端数据没有配置集群'}
         return render(request, 'error/error.html', context) 
     
     #获取所有集群名称
-    listAllClusterName = [master.cluster_name for master in masters]
+    listAllClusterName = [main.cluster_name for main in mains]
 
     dictAllClusterDb = OrderedDict()
     #每一个都首先获取主库地址在哪里
     for clusterName in listAllClusterName:
-        listMasters = master_config.objects.filter(cluster_name=clusterName)
-        if len(listMasters) != 1:
+        listMains = main_config.objects.filter(cluster_name=clusterName)
+        if len(listMains) != 1:
             context = {'errMsg': '存在两个集群名称一样的集群，请修改数据库'}
             return render(request, 'error/error.html', context)
         #取出该集群的名称以及连接方式，为了后面连进去获取所有databases
-        masterHost = listMasters[0].master_host
-        masterPort = listMasters[0].master_port
-        masterUser = listMasters[0].master_user
-#         masterPassword = prpCryptor.decrypt(listMasters[0].master_password)
-        masterPassword = listMasters[0].master_password
+        mainHost = listMains[0].main_host
+        mainPort = listMains[0].main_port
+        mainUser = listMains[0].main_user
+#         mainPassword = prpCryptor.decrypt(listMains[0].main_password)
+        mainPassword = listMains[0].main_password
 
-        listDb = dao.getAlldbByCluster(masterHost, masterPort, masterUser, masterPassword)
+        listDb = dao.getAlldbByCluster(mainHost, mainPort, mainUser, mainPassword)
         dictAllClusterDb[clusterName] = listDb
 
     #获取所有审核人，当前登录用户不可以审核
@@ -362,7 +362,7 @@ def execute(request):
         context = {'errMsg': '当前工单状态不是等待人工审核中，请刷新当前页面！'}
         return render(request, 'error/error.html', context)
 
-    dictConn = getMasterConnStr(clusterName)
+    dictConn = getMainConnStr(clusterName)
 
     #将流程状态修改为执行中，并更新reviewok_time字段
     workflowDetail.status = Const.workflowStatus['executing']
@@ -498,7 +498,7 @@ def charts(request):
     return render(request, 'inception/charts.html', context)
 
 #数据库集群展示
-def masterConfigList(request):
+def mainConfigList(request):
 
 #     search_keyword = request.GET.get('search_keyword')
 # 
@@ -540,14 +540,14 @@ def masterConfigList(request):
     PAGE_LIMIT = paginationList.get('PAGE_LIMIT')
    
     # 查询
-    listMasterConfig = []
-    listMasterConfigNum = 0
+    listMainConfig = []
+    listMainConfigNum = 0
 
     #服务器端参数验证
     if search_keyword == "":
         try:
-            listMasterConfig = master_config.objects.all().order_by('-create_time')[offset:limit]
-            listMasterConfigNum = master_config.objects.count()        
+            listMainConfig = main_config.objects.all().order_by('-create_time')[offset:limit]
+            listMainConfigNum = main_config.objects.count()        
         except Exception as e:
             print(e)
             context = {'errMsg': '内部错误！'+str(e)}
@@ -555,19 +555,19 @@ def masterConfigList(request):
     else:
         try:
             print("search_keyword is Not None:")
-            listMasterConfig = master_config.objects.filter(Q(cluster_name__contains=search_keyword)|Q(master_host__contains=search_keyword)).order_by('-create_time')[offset:limit]
-            listMasterConfigNum = master_config.objects.filter(Q(cluster_name__contains=search_keyword)|Q(master_host__contains=search_keyword)).count()
+            listMainConfig = main_config.objects.filter(Q(cluster_name__contains=search_keyword)|Q(main_host__contains=search_keyword)).order_by('-create_time')[offset:limit]
+            listMainConfigNum = main_config.objects.filter(Q(cluster_name__contains=search_keyword)|Q(main_host__contains=search_keyword)).count()
         except Exception as e:
             print(e)
             context = {'errMsg': '内部错误！'+str(e)}
             return render(request, 'error/error.html', context)
         
-    context = {'listMasterConfig':listMasterConfig, 'listMasterConfigNum':listMasterConfigNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT, 'search_keyword':search_keyword}    
-    return render(request, 'inception/masterConfigList.html', context)
+    context = {'listMainConfig':listMainConfig, 'listMainConfigNum':listMainConfigNum, 'pageNo':pageNo, 'PAGE_LIMIT':PAGE_LIMIT, 'search_keyword':search_keyword}    
+    return render(request, 'inception/mainConfigList.html', context)
 
 # 新增数据库集群配置
-def addMasterConfigForm(request):
-    return render(request, 'inception/addMasterConfig.html')
+def addMainConfigForm(request):
+    return render(request, 'inception/addMainConfig.html')
 
 # 查询工单（admin用户）（搜索问题）
 def getSqlWorkOrderList(request):
@@ -636,15 +636,15 @@ def getSqlWorkOrderDetail(request, sqlOrderId):
     return render(request, 'inception/sqlWorkOrderDetail.html', context) 
 
 #根据集群名获取主库连接字符串，并封装成一个dict
-def getMasterConnStr(clusterName):
-    listMasters = master_config.objects.filter(cluster_name=clusterName)
+def getMainConnStr(clusterName):
+    listMains = main_config.objects.filter(cluster_name=clusterName)
     
-    masterHost = listMasters[0].master_host
-    masterPort = listMasters[0].master_port
-    masterUser = listMasters[0].master_user
-#     masterPassword = prpCryptor.decrypt(listMasters[0].master_password)
-    masterPassword = listMasters[0].master_password
-    dictConn = {'masterHost':masterHost, 'masterPort':masterPort, 'masterUser':masterUser, 'masterPassword':masterPassword}
+    mainHost = listMains[0].main_host
+    mainPort = listMains[0].main_port
+    mainUser = listMains[0].main_user
+#     mainPassword = prpCryptor.decrypt(listMains[0].main_password)
+    mainPassword = listMains[0].main_password
+    dictConn = {'mainHost':mainHost, 'mainPort':mainPort, 'mainUser':mainUser, 'mainPassword':mainPassword}
     return dictConn
 
 #获取当前时间

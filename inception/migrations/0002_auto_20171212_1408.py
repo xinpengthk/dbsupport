@@ -14,13 +14,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='master_config',
+            model_name='main_config',
             name='cluster_name',
             field=models.CharField(db_index=True, max_length=50, verbose_name='集群名称'),
         ),
         migrations.AlterField(
-            model_name='master_config',
-            name='master_password',
+            model_name='main_config',
+            name='main_password',
             field=utils.AesCharField.AesCharField(max_length=300, verbose_name='登录主库的密码'),
         ),
         migrations.AlterField(
