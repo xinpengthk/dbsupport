@@ -13,7 +13,7 @@ from utils.pagination import getPageLimitOffset
 # from .const import Const
 # from .dao import Dao
 # from .inception import InceptionDao
-# from .models import users, master_config, workflow
+# from .models import users, main_config, workflow
 # from .sendmail import MailSender
 def login(request):
     return render(request, 'user/login.html')

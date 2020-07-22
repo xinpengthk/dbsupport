@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .const import Const
 from .dao import Dao
 from .inception import InceptionDao
-from .models import master_config, sql_order
+from .models import main_config, sql_order
 
 
 dao = Dao()
@@ -176,19 +176,19 @@ def stopOscProgress(request):
     return HttpResponse(json.dumps(optResult), content_type='application/json')
 
 @csrf_exempt
-def addMasterConfig(request):
+def addMainConfig(request):
     clusterId = request.POST['cluster_id']
     clusterName = request.POST['cluster_name']
-    masterHost = request.POST['master_host']
-    masterPort = request.POST['master_port']
-    masterUser = request.POST['master_user']
-    masterPassword = request.POST['master_password']
+    mainHost = request.POST['main_host']
+    mainPort = request.POST['main_port']
+    mainUser = request.POST['main_user']
+    mainPassword = request.POST['main_password']
     
     if clusterId == "" or clusterId is None:
         # 新增
         try:        
-            masterConfigObj = master_config(cluster_name=clusterName, master_host=masterHost, master_port=masterPort, master_user=masterUser, master_password=masterPassword)
-            masterConfigObj.save()
+            mainConfigObj = main_config(cluster_name=clusterName, main_host=mainHost, main_port=mainPort, main_user=mainUser, main_password=mainPassword)
+            mainConfigObj.save()
             result = {'status':1, 'msg':'保存成功!', 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
         except Exception as e:
@@ -198,9 +198,9 @@ def addMasterConfig(request):
     else:
         # 修改
         try:        
-            masterConfigObj = master_config.objects.filter(id=clusterId)
-            masterConfigObj.update(cluster_name=clusterName, master_host=masterHost, master_port=masterPort, master_user=masterUser, master_password=masterPassword)
-#             masterConfigObj.save()
+            mainConfigObj = main_config.objects.filter(id=clusterId)
+            mainConfigObj.update(cluster_name=clusterName, main_host=mainHost, main_port=mainPort, main_user=mainUser, main_password=mainPassword)
+#             mainConfigObj.save()
             result = {'status':1, 'msg':'修改成功!', 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
         except Exception as e:
@@ -209,15 +209,15 @@ def addMasterConfig(request):
             return HttpResponse(json.dumps(result), content_type='application/json')        
 
 @csrf_exempt
-def delMasterConfig(request):
-    clusterId = request.POST['masterConfigId']
+def delMainConfig(request):
+    clusterId = request.POST['mainConfigId']
     
     if clusterId == "" or clusterId is None:
         result = {'status':3, 'msg':'未选中任何记录!', 'data':''}
         return HttpResponse(json.dumps(result), content_type='application/json')
     else:
         try:
-            delResult = master_config.objects.filter(id=clusterId).delete()
+            delResult = main_config.objects.filter(id=clusterId).delete()
             print(delResult)
             result = {'status':1, 'msg':'删除成功!', 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')            
@@ -245,14 +245,14 @@ def delsqlOrder(request):
             return HttpResponse(json.dumps(result), content_type='application/json')
 
 @csrf_exempt
-def getMasterConfigDetailInfo(request):
+def getMainConfigDetailInfo(request):
     configId = request.POST['configId']
     
     try:
-        masterConfigObj = master_config.objects.get(id=configId)
-        masterConfigJson = masterConfigObj.toJSON()
+        mainConfigObj = main_config.objects.get(id=configId)
+        mainConfigJson = mainConfigObj.toJSON()
         
-        result = {'status':1, 'msg':'请求成功', 'obj':masterConfigJson}
+        result = {'status':1, 'msg':'请求成功', 'obj':mainConfigJson}
         print(result)
         return HttpResponse(json.dumps(result), content_type='application/json')
     except Exception as e:

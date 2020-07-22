@@ -52,7 +52,7 @@ def addChangeHostInfo(request):
         try:
             hostObj = host.objects.filter(id=v_hostId)
             hostObj.update(businessName=v_businessName, serviceEnv=v_serviceEnv, hostName=v_hostName, intranetIpAddr=v_intranetIpAddr, publicIpAddr=v_publicIpAddr, sshPort=v_sshPort, hostType=v_hostType, hostRole=v_hostRole, hostDesc=v_hostDesc)
-#             masterConfigObj.save()
+#             mainConfigObj.save()
             result = {'status':1, 'msg':'修改成功!', 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
         except Exception as e:
@@ -125,7 +125,7 @@ def addChangeHostUserInfo(request):
         try:
             hostUserObj = hostUser.objects.filter(id=v_hostUserId)
             hostUserObj.update(hostUser=v_hostUser, hostPasswd=v_hostPasswd, userDesc=v_userDesc)
-#             masterConfigObj.save()
+#             mainConfigObj.save()
             result = {'status':1, 'msg':'修改成功!', 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
         except Exception as e:
@@ -202,7 +202,7 @@ def addChangeDbGroupInfo(request):
         try:
             dbGroupObj = dbGroup.objects.filter(id=v_groupId)
             dbGroupObj.update(businessName=v_businessName, groupName=v_groupName, groupEnv=v_groupEnv, groupStatus=v_groupStatus, groupDesc=v_groupDesc)
-#             masterConfigObj.save()
+#             mainConfigObj.save()
             result = {'status':1, 'msg':'修改成功!', 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
         except Exception as e:
@@ -284,7 +284,7 @@ def addChangeDbInstanceInfo(request):
             hostObj = host.objects.get(id=v_host_id)
             dbInstanceObj = dbInstance.objects.filter(id=v_instanceId)
             dbInstanceObj.update(groupName=dbGroupObj, host=hostObj, instanceName=v_instanceName, instanceType=v_instanceType, portNum=v_portNum, instanceRole=v_instanceRole, instanceStatus=v_instanceStatus, instanceDesc=v_instanceDesc)
-#             masterConfigObj.save()
+#             mainConfigObj.save()
             result = {'status':1, 'msg':'修改成功!', 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
         except Exception as e:
@@ -393,7 +393,7 @@ def delDbInstance(request):
 #         try:
 #             dbClusterObj = dbCluster.objects.filter(id=v_clusterId)
 #             dbClusterObj.update(clusterName=v_clusterName, clusterStatus=v_clusterStatus, clusterDesc=v_clusterDesc)
-# #             masterConfigObj.save()
+# #             mainConfigObj.save()
 #             result = {'status':1, 'msg':'修改成功!', 'data':''}
 #             return HttpResponse(json.dumps(result), content_type='application/json')
 #         except Exception as e:
