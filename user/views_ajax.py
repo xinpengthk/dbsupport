@@ -157,7 +157,7 @@ def addChangeUserInfo(request):
         try:
             userObj = users.objects.filter(id=v_userId)
             userObj.update(username=v_userName, display=v_display, role=v_role, email=v_email, is_active=v_is_active, is_staff=v_is_staff)
-#             masterConfigObj.save()
+#             mainConfigObj.save()
             result = {'status':1, 'msg':'修改成功!', 'data':''}
             return HttpResponse(json.dumps(result), content_type='application/json')
         except Exception as e:

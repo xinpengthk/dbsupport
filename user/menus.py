@@ -34,10 +34,10 @@ leftMenusGeneral = {
 
 leftMenusSuper = {
     'INCEPTION 后台管理':[
-            {'key':'masterconfig',
+            {'key':'mainconfig',
             'name':'主库地址配置',
-#             'url':'/admin/inception/master_config/',
-            'url':'/inception/masterConfigList/',
+#             'url':'/admin/inception/main_config/',
+            'url':'/inception/mainConfigList/',
             'sort':1,
             'role':'super'
             },

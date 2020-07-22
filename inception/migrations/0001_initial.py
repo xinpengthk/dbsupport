@@ -14,14 +14,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='master_config',
+            name='main_config',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('cluster_name', models.CharField(max_length=50, verbose_name='集群名称')),
-                ('master_host', models.CharField(max_length=200, verbose_name='主库地址')),
-                ('master_port', models.IntegerField(default=3306, verbose_name='主库端口')),
-                ('master_user', models.CharField(max_length=100, verbose_name='登录主库的用户名')),
-                ('master_password', models.CharField(max_length=300, verbose_name='登录主库的密码')),
+                ('main_host', models.CharField(max_length=200, verbose_name='主库地址')),
+                ('main_port', models.IntegerField(default=3306, verbose_name='主库端口')),
+                ('main_user', models.CharField(max_length=100, verbose_name='登录主库的用户名')),
+                ('main_password', models.CharField(max_length=300, verbose_name='登录主库的密码')),
                 ('create_time', models.DateTimeField(auto_now_add=True, verbose_name='创建时间')),
                 ('update_time', models.DateTimeField(auto_now=True, verbose_name='更新时间')),
             ],

@@ -6,12 +6,12 @@ import re
 from django.conf import settings
 
 import MySQLdb
-from inception.models import master_config, sql_order
+from inception.models import main_config, sql_order
 # from utils.aesDecryptor import Prpcrypt
 
 
 # from workflow import Prpcrypt
-# from workflow import master_config, workflow
+# from workflow import main_config, workflow
 class InceptionDao(object):
     def __init__(self):
         try:
@@ -69,15 +69,15 @@ class InceptionDao(object):
         '''
         将sql交给inception进行自动审核，并返回审核结果。
         '''
-        listMasters = master_config.objects.filter(cluster_name=clusterName)
-        if len(listMasters) != 1:
+        listMains = main_config.objects.filter(cluster_name=clusterName)
+        if len(listMains) != 1:
             print("Error: 主库配置返回为0")
-        masterHost = listMasters[0].master_host
-        masterPort = listMasters[0].master_port
-        masterUser = listMasters[0].master_user
-#         masterPassword = self.prpCryptor.decrypt(listMasters[0].master_password)
-        masterPassword = listMasters[0].master_password
-        print("master config:", masterHost, masterPort, masterUser, masterPassword)
+        mainHost = listMains[0].main_host
+        mainPort = listMains[0].main_port
+        mainUser = listMains[0].main_user
+#         mainPassword = self.prpCryptor.decrypt(listMains[0].main_password)
+        mainPassword = listMains[0].main_password
+        print("main config:", mainHost, mainPort, mainUser, mainPassword)
 
         #这里无需判断字符串是否以；结尾，直接抛给inception enable check即可。
         #if sqlContent[-1] != ";":
@@ -104,7 +104,7 @@ class InceptionDao(object):
                         sqlSplit = "/*--user=%s; --password=%s; --host=%s; --enable-execute;--port=%s; --enable-ignore-warnings;--enable-split;*/\
                              inception_magic_start;\
                              %s\
-                             inception_magic_commit;" % (masterUser, masterPassword, masterHost, str(masterPort), sqlContent)
+                             inception_magic_commit;" % (mainUser, mainPassword, mainHost, str(mainPort), sqlContent)
                         splitResult = self._fetchall(sqlSplit, self.inception_host, self.inception_port, '', '', '')
                         tmpList = []
                         for splitRow in splitResult:
@@ -112,7 +112,7 @@ class InceptionDao(object):
                             sql = "/*--user=%s;--password=%s;--host=%s;--enable-check;--port=%s; --enable-ignore-warnings;*/\
                                     inception_magic_start;\
                                     %s\
-                                    inception_magic_commit;" % (masterUser, masterPassword, masterHost, str(masterPort), sqlTmp)
+                                    inception_magic_commit;" % (mainUser, mainPassword, mainHost, str(mainPort), sqlTmp)
                             reviewResult = self._fetchall(sql, self.inception_host, self.inception_port, '', '', '')
                             tmpList.append(reviewResult)
 
@@ -127,7 +127,7 @@ class InceptionDao(object):
                         sql="/*--user=%s;--password=%s;--host=%s;--enable-check=1;--port=%s;*/\
                           inception_magic_start;\
                           %s\
-                          inception_magic_commit;" % (masterUser, masterPassword, masterHost, str(masterPort), sqlContent)
+                          inception_magic_commit;" % (mainUser, mainPassword, mainHost, str(mainPort), sqlContent)
                         print("inception sql:", sql)
                         result = self._fetchall(sql, self.inception_host, self.inception_port, '', '', '')
         return result
@@ -146,7 +146,7 @@ class InceptionDao(object):
         sqlSplit = "/*--user=%s; --password=%s; --host=%s; --enable-execute;--port=%s; --enable-ignore-warnings;--enable-split;*/\
              inception_magic_start;\
              %s\
-             inception_magic_commit;" % (dictConn['masterUser'], dictConn['masterPassword'], dictConn['masterHost'], str(dictConn['masterPort']), workflowDetail.sql_content)
+             inception_magic_commit;" % (dictConn['mainUser'], dictConn['mainPassword'], dictConn['mainHost'], str(dictConn['mainPort']), workflowDetail.sql_content)
         splitResult = self._fetchall(sqlSplit, self.inception_host, self.inception_port, '', '', '')
 
         tmpList = []
@@ -156,7 +156,7 @@ class InceptionDao(object):
             sqlExecute = "/*--user=%s;--password=%s;--host=%s;--enable-execute;--port=%s; --enable-ignore-warnings;%s*/\
                     inception_magic_start;\
                     %s\
-                    inception_magic_commit;" % (dictConn['masterUser'], dictConn['masterPassword'], dictConn['masterHost'], str(dictConn['masterPort']), strBackup, sqlTmp)
+                    inception_magic_commit;" % (dictConn['mainUser'], dictConn['mainPassword'], dictConn['mainHost'], str(dictConn['mainPort']), strBackup, sqlTmp)
                     
             executeResult = self._fetchall(sqlExecute, self.inception_host, self.inception_port, '', '', '')
             for sqlRow in executeResult:
